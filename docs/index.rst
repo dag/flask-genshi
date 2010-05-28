@@ -8,6 +8,8 @@ use `Genshi`_ for templating. It uses Flask's :class:`~flask.Config` and can
 create :class:`~flask.Response` objects with mimetype
 set based on how you render templates.
 
+Source code and issue tracking at `Bitbucket`_.
+
 
 Installation
 ------------
@@ -83,3 +85,4 @@ API Reference
 
 .. _Flask: http://flask.pocoo.org/
 .. _Genshi: http://genshi.edgewall.org/
+.. _Bitbucket: http://bitbucket.org/dag/flask-genshi
