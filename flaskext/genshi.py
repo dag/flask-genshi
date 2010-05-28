@@ -9,6 +9,8 @@
     :license: BSD, see LICENSE for more details.
 """
 
+from __future__ import absolute_import
+
 from flask import Flask, current_app
 from werkzeug import cached_property
 from genshi.template import TemplateLoader, loader
