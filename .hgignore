@@ -1,4 +1,4 @@
 syntax: glob
 
 *.py[co]
-build/*
+docs/_build/*
