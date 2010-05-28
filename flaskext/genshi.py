@@ -11,7 +11,9 @@
 
 from __future__ import absolute_import
 
-from flask import current_app
+from copy import deepcopy
+
+from flask import Config, current_app
 from genshi.template import TemplateLoader, loader
 
 
@@ -45,9 +47,10 @@ GENSHI_TYPES={
 
 def init_genshi(app):
     """Configure a Flask application for Genshi."""
-    app.config.from_object(__name__)
-    app.config['GENSHI_LOADER'] = GENSHI_LOADER.copy()
-    app.config['GENSHI_TYPES'] = GENSHI_TYPES.copy()
+    cfg = Config(app.root_path, app.default_config)
+    cfg.from_object(__name__)
+    for key, value in cfg.iteritems():
+        app.config.setdefault(key, deepcopy(value))
     return app
 
 
@@ -62,8 +65,8 @@ def render_template(template, context=None, **render_args):
     if context is None:
         context = {}
 
-    for k, v in current_app.jinja_env.globals.iteritems():
-        context.setdefault(k, v)
+    for key, value in current_app.jinja_env.globals.iteritems():
+        context.setdefault(key, value)
     context.setdefault('filters', current_app.jinja_env.filters)
     context.setdefault('tests', current_app.jinja_env.tests)
 
