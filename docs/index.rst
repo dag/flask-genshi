@@ -25,11 +25,14 @@ install Flask as Flask-Genshi depends on it already.
 How to Use
 ----------
 
-You need to create your application by instantiating :class:`GenshiFlask`::
+You need to run :func:`init_genshi` on your :class:`~flask.Flask` instance.
 
-    from flaskext.genshi import GenshiFlask
+::
+
+    from flaskext.genshi import init_genshi
     
-    app = GenshiFlask(__name__)
+    app = Flask(__name__)
+    init_genshi(app)
 
 The best way to render templates is to use :func:`render_response`.
 This ensures that the proper mimetype is sent if you render XHTML or text,
@@ -76,7 +79,7 @@ Configuration Values
 API Reference
 -------------
 
-.. autoclass:: GenshiFlask
+.. autofunction:: init_genshi
 
 .. autofunction:: render_template
 

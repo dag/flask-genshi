@@ -12,42 +12,53 @@
 from __future__ import absolute_import
 
 from flask import Flask, current_app
-from werkzeug import cached_property
 from genshi.template import TemplateLoader, loader
 
 
-class GenshiFlask(Flask):
-    """Subclass of :class:`~flask.Flask` that configures Genshi."""
+GENSHI_LOADER={'auto_reload': True}
+GENSHI_TEMPLATES_PATH='templates'
+GENSHI_DEFAULT_DOCTYPE='html'
+GENSHI_DEFAULT_METHOD='html'
+GENSHI_DEFAULT_TYPE='html'
+GENSHI_TYPES={
+    'html': {
+        'method': 'html',
+        'doctype': 'html',
+        'mimetype': 'text/html'},
+    'html5': {
+        'method': 'html',
+        'doctype': 'html5',
+        'mimetype':
+        'text/html'},
+    'xhtml': {
+        'method': 'xhtml',
+        'doctype': 'xhtml',
+        'mimetype': 'application/xhtml+xml'},
+    'xml': {
+        'method': 'xml',
+        'mimetype': 'application/xml'},
+    'text': {
+        'method': 'text',
+        'mimetype': 'text/plain'}
+}
 
-    def __init__(self, *args, **kwargs):
-        Flask.__init__(self, *args, **kwargs)
-        self.config.update(
-            GENSHI_LOADER=dict(auto_reload=True),
-            GENSHI_TEMPLATES_PATH='templates',
-            GENSHI_DEFAULT_DOCTYPE='html',
-            GENSHI_DEFAULT_METHOD='html',
-            GENSHI_DEFAULT_TYPE='html',
-            GENSHI_TYPES={
-                'html': dict(method='html', doctype='html',
-                             mimetype='text/html'),
-                'html5': dict(method='html', doctype='html5',
-                              mimetype='text/html'),
-                'xhtml': dict(method='xhtml', doctype='xhtml',
-                              mimetype='application/xhtml+xml'),
-                'xml': dict(method='xml', mimetype='application/xml'),
-                'text': dict(method='text', mimetype='text/plain')
-            }
-        )
 
-    @cached_property
-    def genshi_loader(self):
-        path = loader.package(self.import_name,
-                              self.config['GENSHI_TEMPLATES_PATH'])
-        return TemplateLoader(path, **self.config['GENSHI_LOADER'])
+def init_genshi(app):
+    """Configure a Flask application for Genshi."""
+    app.config.from_object(__name__)
+    app.config['GENSHI_LOADER'] = GENSHI_LOADER.copy()
+    app.config['GENSHI_TYPES'] = GENSHI_TYPES.copy()
+    return app
 
 
 def render_template(template_name, context, **render_args):
     """Render a Genshi template under ``GENSHI_TEMPLATES_PATH``."""
+    if not hasattr(current_app, 'genshi_loader'):
+        path = loader.package(current_app.import_name,
+                              current_app.config['GENSHI_TEMPLATES_PATH'])
+        current_app.genshi_loader = \
+            TemplateLoader(path, **current_app.config['GENSHI_LOADER'])
+
     for k, v in current_app.jinja_env.globals.iteritems():
         context.setdefault(k, v)
     context.setdefault('filters', current_app.jinja_env.filters)
