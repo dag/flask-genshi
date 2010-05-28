@@ -9,7 +9,7 @@ Links
 
 * `documentation <http://packages.python.org/Flask-Genshi>`_
 * `development version
-  <http://bitbucket.org/dag/flask-genshi/get/tip.gz#egg=Flask-Genshi-dev`_
+  <http://bitbucket.org/dag/flask-genshi/get/tip.gz#egg=Flask-Genshi-dev>`_
 
 
 """
