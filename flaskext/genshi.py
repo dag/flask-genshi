@@ -11,7 +11,7 @@
 
 from __future__ import absolute_import
 
-from flask import Flask, current_app
+from flask import current_app
 from genshi.template import TemplateLoader, loader
 
 
