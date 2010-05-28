@@ -3,7 +3,7 @@
     flaskext.genshi
     ~~~~~~~~~~~~~~~
 
-    Description of the module goes here...
+    An extension to Flask for easy Genshi templating.
 
     :copyright: (c) 2010 by Dag Odenhall <dag.odenhall@gmail.com>.
     :license: BSD, see LICENSE for more details.

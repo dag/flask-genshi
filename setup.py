@@ -2,14 +2,14 @@
 Flask-Genshi
 ------------
 
-Description goes here...
+An extension to Flask for easy Genshi templating.
 
 Links
 `````
 
 * `documentation <http://packages.python.org/Flask-Genshi>`_
 * `development version
-  <http://bitbucket.org/USERNAME/REPOSITORY/get/tip.gz#egg=Flask-Genshi-dev`_
+  <http://bitbucket.org/dag/flask-genshi/get/tip.gz#egg=Flask-Genshi-dev`_
 
 
 """
@@ -19,11 +19,11 @@ from setuptools import setup
 setup(
     name='Flask-Genshi',
     version='0.1',
-    url='<enter URL here>',
+    url='http://packages.python.org/Flask-Genshi',
     license='BSD',
-    author='Dag Odenhall <dag.odenhall@gmail.com>',
-    author_email='your-email-here@example.com',
-    description='<enter short description here>',
+    author='Dag Odenhall',
+    author_email='dag.odenhall@gmail.com',
+    description='An extension to Flask for easy Genshi templating.',
     long_description=__doc__,
     packages=['flaskext'],
     namespace_packages=['flaskext'],
