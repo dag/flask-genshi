@@ -77,7 +77,7 @@ def render_template(template_name, context=None, **render_args):
     return template.generate(**context).render(**render_args)
 
 
-def render_response(template, context=None, type=None):
+def render_response(template_name, context=None, type=None):
     """Render to a :class:`~flask.Response` with correct mimetype."""
     config = current_app.config
     if type is None:
@@ -89,6 +89,6 @@ def render_response(template, context=None, type=None):
     if 'doctype' in type:
         render_args['doctype'] = type['doctype']
 
-    body = render_template(template, context, **render_args)
+    body = render_template(template_name, context, **render_args)
     return current_app.response_class(body, mimetype=type['mimetype'])
 
