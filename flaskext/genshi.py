@@ -17,7 +17,7 @@ from genshi.template import TemplateLoader, loader
 
 
 class GenshiFlask(Flask):
-    """Subclass of Flask that configures Genshi."""
+    """Subclass of :class:`~flask.Flask` that configures Genshi."""
 
     def __init__(self, *args, **kwargs):
         Flask.__init__(self, *args, **kwargs)
@@ -47,7 +47,7 @@ class GenshiFlask(Flask):
 
 
 def render_template(template_name, context, **render_args):
-    """Render a Genshi template under GENSHI_TEMPLATES_PATH."""
+    """Render a Genshi template under ``GENSHI_TEMPLATES_PATH``."""
     for k, v in current_app.jinja_env.globals.iteritems():
         context.setdefault(k, v)
     context.setdefault('filters', current_app.jinja_env.filters)
@@ -64,7 +64,7 @@ def render_template(template_name, context, **render_args):
 
 
 def render_response(template, context={}, type=None):
-    """Render to a Response with correct mimetype."""
+    """Render to a :class:`~flask.Response` with correct mimetype."""
     config = current_app.config
     if type is None:
         type = config['GENSHI_TYPES'][config['GENSHI_DEFAULT_TYPE']]

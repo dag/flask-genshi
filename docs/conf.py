@@ -17,6 +17,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('_themes'))
+sys.path.append(os.path.abspath('..'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -96,14 +97,14 @@ html_theme = 'flask_small'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+html_theme_options = {'github_fork': None}
 
 # Add any paths that contain custom themes here, relative to this directory.
 html_theme_path = ['_themes']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = None
+html_title = 'Flask-Genshi'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
@@ -217,4 +218,7 @@ man_pages = [
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
+intersphinx_mapping = {
+    'http://docs.python.org/': None,
+    'http://flask.pocoo.org/docs': None
+}
