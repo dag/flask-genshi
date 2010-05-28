@@ -51,13 +51,16 @@ def init_genshi(app):
     return app
 
 
-def render_template(template_name, context, **render_args):
+def render_template(template_name, context=None, **render_args):
     """Render a Genshi template under ``GENSHI_TEMPLATES_PATH``."""
     if not hasattr(current_app, 'genshi_loader'):
         path = loader.package(current_app.import_name,
                               current_app.config['GENSHI_TEMPLATES_PATH'])
         current_app.genshi_loader = \
             TemplateLoader(path, **current_app.config['GENSHI_LOADER'])
+
+    if context is None:
+        context = {}
 
     for k, v in current_app.jinja_env.globals.iteritems():
         context.setdefault(k, v)
@@ -74,7 +77,7 @@ def render_template(template_name, context, **render_args):
     return template.generate(**context).render(**render_args)
 
 
-def render_response(template, context={}, type=None):
+def render_response(template, context=None, type=None):
     """Render to a :class:`~flask.Response` with correct mimetype."""
     config = current_app.config
     if type is None:
