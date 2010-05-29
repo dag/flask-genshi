@@ -69,7 +69,7 @@ Configuration Values
                            ``xhtml``, ``html`` and ``text``.
                            Defaults to ``html``.
 ``GENSHI_DEFAULT_TYPE``    For :func:`render_response`. One of ``xml``,
-                           ``xhtml``, ``html`` ``html5`` and ``text``.
+                           ``xhtml``, ``html``, ``html5`` and ``text``.
                            Defaults to ``html``.
 ``GENSHI_TYPES``           Maps types for :func:`render_response`
                            to their mimetype, method and doctype.
