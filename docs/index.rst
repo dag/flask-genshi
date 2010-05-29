@@ -61,18 +61,16 @@ Configuration Values
                            Defaults to ``{'auto_reload': True}``.
 ``GENSHI_TEMPLATES_PATH``  Path under ``app.root_path`` to templates.
                            Defaults to ``templates``.
-``GENSHI_DEFAULT_DOCTYPE`` For :func:`render_template`. One of ``html``, 
-                           ``html-transitional``, ``xhtml``,
-                           ``xhtml-transitional`` and ``html5``.
-                           Defaults to ``html``.
-``GENSHI_DEFAULT_METHOD``  For :func:`render_template`. One of ``xml``,
-                           ``xhtml``, ``html`` and ``text``.
-                           Defaults to ``html``.
-``GENSHI_DEFAULT_TYPE``    For :func:`render_response`. One of ``xml``,
-                           ``xhtml``, ``html``, ``html5`` and ``text``.
-                           Defaults to ``html``.
-``GENSHI_TYPES``           Maps types for :func:`render_response`
-                           to their mimetype, method and doctype.
+``GENSHI_RENDER_ARGS``     Default ``render_args`` for :func:`render_template`,
+                           See API reference below for valid options.
+                           Defaults to ``{ 'method': 'html', 'doctype': 'html',
+                           'encoding': 'UTF-8' }``.
+``GENSHI_DEFAULT_TYPE``    Default ``type`` for :func:`render_response`.
+                           Defaults to ``'html'``.
+``GENSHI_TYPES``           A dictionary of dictionaries with preconfigured
+                           options for ``render_args`` and ``mimetype``.
+                           Includes by default  ``'html'``, ``'html5'``,
+                           ``'xhtml'``, ``'xml'`` and ``'text'``.
 ========================== =================================================
 
 
