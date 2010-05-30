@@ -49,6 +49,35 @@ Use it like so::
         return render_response('index.html', dict(title=title))
 
 
+Using Methods
+-------------
+
+Methods control things such as the doctype and how end tags are rendered,
+and with :func:`render_response` also the mimetype.
+Unless overridden the method used is decided
+by the template's filename extension.
+
+By default HTML renders as strict HTML 4.01. This is how you
+change it to HTML5::
+
+    genshi.extensions['html'] = 'html5'
+
+`I recommend against this
+<http://webkit.org/blog/68/understanding-html-xml-and-xhtml/>`_
+but of course you can also change it to XHTML::
+
+    genshi.extensions['html'] = 'xhtml'
+
+You can also override the default with a parameter
+to the templating functions::
+
+    render_response('video.html', method='html5')
+
+The extensions `html`, `xml` and `txt` are recognized, but you can add
+any extension and method you like. Note that text templates are rendered
+with :class:`genshi.template.NewTextTemplate` which is not XML-based.
+
+
 API Reference
 -------------
 
