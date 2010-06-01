@@ -73,9 +73,12 @@ to the templating functions::
 
     render_response('video.html', method='html5')
 
-The extensions `html`, `xml` and `txt` are recognized, but you can add
-any extension and method you like. Note that text templates are rendered
-with :class:`genshi.template.NewTextTemplate` which is not XML-based.
+The extensions `html`, `xml`, `txt`, `js` and `css` are recognized,
+but you can add any extension and method you like. Note that `txt`, `js`
+and `css` templates are rendered with :class:`genshi.template.NewTextTemplate`
+which is not XML-based. Rendering javascript with templates gives you tools
+like :func:`flask.url_for` and rendering CSS with templates gives you
+dynamic stylesheets with things like variables.
 
 
 API Reference

@@ -39,3 +39,22 @@ def renders_xml():
     same(rendered.mimetype, 'application/xml')
     same(rendered.data, '<name>Rudolf</name>')
 
+
+@test
+def renders_js():
+    """A js extension results in no doctype
+    and a application/javascript mimetype"""
+    with app.test_request_context():
+        rendered = render_response('test.js', context)
+    same(rendered.mimetype, 'application/javascript')
+    same(rendered.data, 'alert("Rudolf");\n')
+
+
+@test
+def renders_css():
+    """A css extension results in no doctype and a text/css mimetype"""
+    with app.test_request_context():
+        rendered = render_response('test.css', context)
+    same(rendered.mimetype, 'text/css')
+    same(rendered.data, 'h1:after { content: " Rudolf"; }\n')
+

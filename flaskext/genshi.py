@@ -30,7 +30,9 @@ class Genshi(object):
         self.extensions = {
             'html': 'html',
             'xml': 'xml',
-            'txt': 'text'
+            'txt': 'text',
+            'js': 'js',
+            'css': 'css'
         }
 
         #: Render methods.
@@ -55,6 +57,16 @@ class Genshi(object):
             'text': {
                 'serializer': 'text',
                 'mimetype': 'text/plain',
+                'class': NewTextTemplate
+            },
+            'js': {
+                'serializer': 'text',
+                'mimetype': 'application/javascript',
+                'class': NewTextTemplate
+            },
+            'css': {
+                'serializer': 'text',
+                'mimetype': 'text/css',
                 'class': NewTextTemplate
             }
         }
