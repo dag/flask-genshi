@@ -18,7 +18,7 @@ from setuptools import setup
 
 setup(
     name='Flask-Genshi',
-    version='0.1',
+    version='0.2',
     url='http://packages.python.org/Flask-Genshi',
     license='BSD',
     author='Dag Odenhall',
@@ -30,7 +30,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'Flask>=0.3',
+        'Flask',
         'Genshi'
     ],
     classifiers=[
