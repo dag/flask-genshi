@@ -3,6 +3,7 @@ from flask import Flask
 from nose.tools import istest as test, \
                        assert_equal as same, \
                        assert_not_equal as differ
+from genshi.filters import Transformer
 
 from flaskext.genshi import *
 
@@ -58,3 +59,18 @@ def renders_css():
     same(rendered.mimetype, 'text/css')
     same(rendered.data, 'h1:after { content: " Rudolf"; }\n')
 
+
+@genshi.filter('html')
+def prepend_title(template):
+    return template | Transformer('head/title').prepend('Flask-Genshi - ')
+
+@test
+def applies_filters():
+    """Filters are applied for generated and rendered templates"""
+    with app.test_request_context():
+        rendered = render_template('filter.html')
+    same(rendered, '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
+                   '"http://www.w3.org/TR/html4/strict.dtd">\n'
+                   '<html><head>'
+                   '<title>Flask-Genshi - Hi!</title>'
+                   '</head></html>')

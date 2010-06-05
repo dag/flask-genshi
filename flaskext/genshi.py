@@ -11,6 +11,8 @@
 
 from __future__ import absolute_import
 
+from functools import wraps
+from collections import defaultdict
 from os.path import splitext
 
 from genshi.template import NewTextTemplate, loader, TemplateLoader
@@ -71,6 +73,11 @@ class Genshi(object):
             }
         }
 
+        #: Filter functions to be applied to templates.
+        #:
+        #: .. versionadded:: 0.3
+        self.filters = defaultdict(list)
+
     @cached_property
     def template_loader(self):
         """A :class:`genshi.template.TemplateLoader` that loads templates
@@ -80,6 +87,31 @@ class Genshi(object):
         path = loader.package(self.app.import_name, 'templates')
         return TemplateLoader(path, auto_reload=self.app.debug)
 
+    def filter(self, *methods):
+        """Decorator that adds a function to apply filters
+        to templates by rendering method.
+
+        Example::
+
+            from genshi.filters import Transformer
+
+            @genshi.filter('html')
+            def prepend_title(template):
+                return template | Transformer('head/title').prepend('MySite - ')
+
+        See the `Genshi documentation
+        <http://genshi.edgewall.org/wiki/Documentation/0.6.x/filters.html>`_
+        for more filters you can use.
+
+        .. versionadded:: 0.3
+
+        """
+        def decorator(function):
+            for method in methods:
+                self.filters[method].append(function)
+            return function
+        return decorator
+
 
 def select_method(template, method=None):
     """Selects a method from :attr:`Genshi.methods`
@@ -87,11 +119,11 @@ def select_method(template, method=None):
     and :attr:`Genshi.extensions`, or based on ``method``.
 
     """
-    genshi = current_app.genshi_instance
     if method is None:
+        genshi = current_app.genshi_instance
         ext = splitext(template)[1][1:]
-        return genshi.methods[genshi.extensions[ext]]
-    return genshi.methods[method]
+        return genshi.extensions[ext]
+    return method
 
 
 def generate_template(template, context=None, method=None):
@@ -99,25 +131,29 @@ def generate_template(template, context=None, method=None):
     run filters and transformations on.
 
     """
-    class_ = select_method(template, method).get('class')
+    method = select_method(template, method)
+    genshi = current_app.genshi_instance
+    class_ = genshi.methods[method].get('class')
     context = context or {}
     for key, value in current_app.jinja_env.globals.iteritems():
         context.setdefault(key, value)
     context.setdefault('filters', current_app.jinja_env.filters)
     context.setdefault('tests', current_app.jinja_env.tests)
-    genshi = current_app.genshi_instance
     template = genshi.template_loader.load(template, cls=class_)
-    return template.generate(**context)
+    template = template.generate(**context)
+    for filter in genshi.filters[method]:
+        template = filter(template)
+    return template
 
 
 def render_template(template, context=None, method=None):
     """Renders a template to a string."""
-    template_name = template
+    method = select_method(template, method)
     template = generate_template(template, context, method)
-    method = select_method(template_name, method)
-    render_args = dict(method=method['serializer'])
-    if 'doctype' in method:
-        render_args['doctype'] = method['doctype']
+    genshi = current_app.genshi_instance
+    render_args = dict(method=genshi.methods[method]['serializer'])
+    if 'doctype' in genshi.methods[method]:
+        render_args['doctype'] = genshi.methods[method]['doctype']
     return template.render(**render_args)
 
 
@@ -126,7 +162,9 @@ def render_response(template, context=None, method=None):
     with mimetype set according to the rendering method.
 
     """
-    mimetype = select_method(template, method).get('mimetype', 'text/html')
+    method = select_method(template, method)
+    genshi = current_app.genshi_instance
+    mimetype = genshi.methods[method].get('mimetype', 'text/html')
     template = render_template(template, context, method)
     return current_app.response_class(template, mimetype=mimetype)
 
