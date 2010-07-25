@@ -2,16 +2,33 @@
 Flask-Genshi
 ------------
 
-An extension to Flask for easy Genshi templating.
+`Flask-Genshi`_ is an extension to `Flask`_ that allows you to easily
+use `Genshi`_ for templating. Easily switch between HTML5 and XHTML
+and have the mimetype set automatically for you.
 
-Links
-`````
+::
 
-* `documentation <http://packages.python.org/Flask-Genshi>`_
-* `development version
-  <http://bitbucket.org/dag/flask-genshi/get/tip.gz#egg=Flask-Genshi-dev>`_
+    from flaskext.genshi import Genshi, render_response
+    
+    app = Flask(__name__)
+    genshi = Genshi(app)
 
+    @app.route('/')
+    def index():
+        title = 'Genshi + Flask, a match made in heaven!'
+        return render_response('index.html', dict(title=title))
 
+You can install the `development version`_ from `Bitbucket`_
+with ``easy_install Flask-Genshi==dev`` but you probably want the
+latest stable release::
+
+    sudo easy_install Flask-Genshi
+
+.. _Flask-Genshi: http://packages.python.org/Flask-Genshi/
+.. _Flask: http://flask.pocoo.org/
+.. _Genshi: http://genshi.edgewall.org/
+.. _development version: http://bitbucket.org/dag/flask-genshi/get/tip.gz#egg=Flask-Genshi-dev
+.. _Bitbucket: http://bitbucket.org/dag/flask-genshi
 """
 from setuptools import setup
 
@@ -29,6 +46,8 @@ setup(
     namespace_packages=['flaskext'],
     zip_safe=False,
     platforms='any',
+    test_suite='nose.collector',
+    tests_require=['nose'],
     install_requires=[
         'Flask',
         'Genshi'
