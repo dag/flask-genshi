@@ -1,4 +1,6 @@
 
+from __future__ import with_statement
+
 from flask import Flask
 from nose.tools import istest as test, assert_equal
 from genshi.filters import Transformer
@@ -72,3 +74,4 @@ def applies_filters():
         '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
         '"http://www.w3.org/TR/html4/strict.dtd">\n'
         '<html><head><title>Flask-Genshi - Hi!</title></head></html>')
+
