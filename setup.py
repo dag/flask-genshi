@@ -8,6 +8,7 @@ and have the mimetype set automatically for you.
 
 ::
 
+    from flask import Flask
     from flaskext.genshi import Genshi, render_response
     
     app = Flask(__name__)
