@@ -39,6 +39,8 @@ class Genshi(object):
         }
 
         #: Render methods.
+        #:
+        #: .. versionchanged:: 0.3 Support for Javascript and CSS.
         self.methods = {
             'html': {
                 'serializer': 'html',
