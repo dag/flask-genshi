@@ -7,15 +7,16 @@ from genshi.filters import Transformer
 
 from flask_genshi_testapp import app, genshi
 
-
 context = dict(name='Rudolf')
 
 
 def setup():
-    app.test_request_context().push()
+    global request_context
+    request_context = app.test_request_context()
+    request_context.push()
 
 def teardown():
-    app.test_request_context().pop()
+    request_context.pop()
 
 
 @test
