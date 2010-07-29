@@ -1,12 +1,8 @@
-include LICENSE tests.py
-recursive-include templates *
-recursive-include testmodule *
-recursive-exclude testmodule *.pyc
-recursive-exclude testmodule *.pyo
-recursive-include views *
-recursive-exclude views *.pyc
-recursive-exclude views *.pyo
+include LICENSE
 recursive-include docs *
 recursive-exclude docs *.pyc
 recursive-exclude docs *.pyo
+recursive-include tests *
+recursive-exclude tests *.pyc
+recursive-exclude tests *.pyo
 prune docs/_build
