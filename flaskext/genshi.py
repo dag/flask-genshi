@@ -154,21 +154,26 @@ def generate_template(template=None, context=None, method=None, string=None):
     genshi = current_app.genshi_instance
     method = genshi._method_for(template, method)
     class_ = genshi.methods[method].get('class', MarkupTemplate)
+
     context = context or {}
     for key, value in current_app.jinja_env.globals.iteritems():
         context.setdefault(key, value)
     context.setdefault('filters', current_app.jinja_env.filters)
     context.setdefault('tests', current_app.jinja_env.tests)
     current_app.update_template_context(context)
+
     if template is not None:
         template = genshi.template_loader.load(template, cls=class_)
     elif string is not None:
         template = class_(string)
     else:
         raise RuntimeError('Need a template or string')
+
     template = template.generate(**context)
+
     for filter in genshi.filters[method]:
         template = filter(template)
+
     return template
 
 
