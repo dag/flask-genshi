@@ -14,6 +14,7 @@ from __future__ import absolute_import
 from functools import wraps
 from collections import defaultdict
 from os.path import splitext
+from warnings import warn
 
 from genshi.template import NewTextTemplate, loader, TemplateLoader
 from werkzeug import cached_property
@@ -112,18 +113,27 @@ class Genshi(object):
             return function
         return decorator
 
+    def _method_for(self, template, method=None):
+        """Selects a method from :attr:`Genshi.methods`
+        based on the file extension of ``template``
+        and :attr:`Genshi.extensions`, or based on ``method``.
+
+        """
+        if method is None:
+            ext = splitext(template)[1][1:]
+            return self.extensions[ext]
+        return method
+
 
 def select_method(template, method=None):
-    """Selects a method from :attr:`Genshi.methods`
-    based on the file extension of ``template``
-    and :attr:`Genshi.extensions`, or based on ``method``.
+    """Same as :meth:`Genshi._method_for`.
+
+    .. deprecated:: 0.4
 
     """
-    if method is None:
-        genshi = current_app.genshi_instance
-        ext = splitext(template)[1][1:]
-        return genshi.extensions[ext]
-    return method
+    warn('select_method to be dropped in future releases',
+         DeprecationWarning, stacklevel=2)
+    return current_app.genshi_instance._method_for(template, method)
 
 
 def generate_template(template, context=None, method=None):
@@ -131,8 +141,8 @@ def generate_template(template, context=None, method=None):
     run filters and transformations on.
 
     """
-    method = select_method(template, method)
     genshi = current_app.genshi_instance
+    method = genshi._method_for(template, method)
     class_ = genshi.methods[method].get('class')
     context = context or {}
     for key, value in current_app.jinja_env.globals.iteritems():
@@ -148,9 +158,9 @@ def generate_template(template, context=None, method=None):
 
 def render_template(template, context=None, method=None):
     """Renders a template to a string."""
-    method = select_method(template, method)
-    template = generate_template(template, context, method)
     genshi = current_app.genshi_instance
+    method = genshi._method_for(template, method)
+    template = generate_template(template, context, method)
     render_args = dict(method=genshi.methods[method]['serializer'])
     if 'doctype' in genshi.methods[method]:
         render_args['doctype'] = genshi.methods[method]['doctype']
@@ -162,8 +172,8 @@ def render_response(template, context=None, method=None):
     with mimetype set according to the rendering method.
 
     """
-    method = select_method(template, method)
     genshi = current_app.genshi_instance
+    method = genshi._method_for(template, method)
     mimetype = genshi.methods[method].get('mimetype', 'text/html')
     template = render_template(template, context, method)
     return current_app.response_class(template, mimetype=mimetype)

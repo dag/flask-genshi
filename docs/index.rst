@@ -87,8 +87,6 @@ API Reference
 .. autoclass:: Genshi
     :members:
 
-.. autofunction:: select_method
-
 .. autofunction:: generate_template
 
 .. autofunction:: render_template
