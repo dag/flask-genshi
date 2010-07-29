@@ -158,6 +158,7 @@ def generate_template(template, context=None, method=None):
         context.setdefault(key, value)
     context.setdefault('filters', current_app.jinja_env.filters)
     context.setdefault('tests', current_app.jinja_env.tests)
+    current_app.update_template_context(context)
     template = genshi.template_loader.load(template, cls=class_)
     template = template.generate(**context)
     for filter in genshi.filters[method]:

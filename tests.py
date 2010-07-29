@@ -89,3 +89,14 @@ def applies_filters():
         '"http://www.w3.org/TR/html4/strict.dtd">\n'
         '<html><head><title>Flask-Genshi - Hi!</title></head></html>')
 
+
+@app.context_processor
+def inject_rudolf():
+    return dict(rudolf='The red-nosed reindeer')
+
+@test
+def updates_context():
+    """Render calls update the template context with context processors"""
+    with app.test_request_context():
+        rendered = render_response('context.html')
+
