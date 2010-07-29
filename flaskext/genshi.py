@@ -35,12 +35,14 @@ class Genshi(object):
             'xml': 'xml',
             'txt': 'text',
             'js': 'js',
-            'css': 'css'
+            'css': 'css',
+            'svg': 'svg'
         }
 
         #: Render methods.
         #:
         #: .. versionchanged:: 0.3 Support for Javascript and CSS.
+        #: .. versionchanged:: 0.4 Support for SVG.
         self.methods = {
             'html': {
                 'serializer': 'html',
@@ -73,6 +75,11 @@ class Genshi(object):
                 'serializer': 'text',
                 'mimetype': 'text/css',
                 'class': NewTextTemplate
+            },
+            'svg': {
+                'serializer': 'xml',
+                'doctype': 'svg',
+                'mimetype': 'image/svg+xml'
             }
         }
 

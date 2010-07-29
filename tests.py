@@ -15,7 +15,7 @@ context = dict(name='Rudolf')
 
 @test
 def renders_html():
-    """A html extension results in a HTML doctype and mimetype"""
+    """A html extension results in an HTML doctype and mimetype"""
     with app.test_request_context():
         rendered = render_response('test.html', context)
     assert_equal(rendered.mimetype, 'text/html')
@@ -35,7 +35,7 @@ def renders_text():
 
 @test
 def renders_xml():
-    """A xml extension results in no doctype and a application/xml mimetype"""
+    """An xml extension results in no doctype and a application/xml mimetype"""
     with app.test_request_context():
         rendered = render_response('test.xml', context)
     assert_equal(rendered.mimetype, 'application/xml')
@@ -59,6 +59,20 @@ def renders_css():
         rendered = render_response('test.css', context)
     assert_equal(rendered.mimetype, 'text/css')
     assert_equal(rendered.data, 'h1:after { content: " Rudolf"; }\n')
+
+
+@test
+def renders_svg():
+    """An svg extension results in an SVG doctype and mimetype"""
+    with app.test_request_context():
+        rendered = render_response('test.svg', context)
+    assert_equal(rendered.mimetype, 'image/svg+xml')
+    assert_equal(rendered.data,
+        '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" '
+        '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
+        '<svg viewBox="0 0 1000 300">\n'
+        '<text x="250" y="150" font-size="55">Hi Rudolf</text>\n'
+        '</svg>')
 
 
 @genshi.filter('html')

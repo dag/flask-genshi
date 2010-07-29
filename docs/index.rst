@@ -73,7 +73,7 @@ to the templating functions::
 
     render_response('video.html', method='html5')
 
-The extensions `html`, `xml`, `txt`, `js` and `css` are recognized,
+The extensions `html`, `xml`, `txt`, `js`, `css` and `svg` are recognized,
 but you can add any extension and method you like. Note that `txt`, `js`
 and `css` templates are rendered with :class:`genshi.template.NewTextTemplate`
 which is not XML-based. Rendering javascript with templates gives you tools

@@ -1,0 +1,3 @@
+<svg viewBox="0 0 1000 300">
+<text x="250" y="150" font-size="55">Hi $name</text>
+</svg>
