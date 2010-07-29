@@ -7,8 +7,13 @@ from genshi.filters import Transformer
 
 from flaskext.genshi import Genshi, render_response, render_template
 
+import testmodule
+import views.test
+
 
 app = Flask(__name__)
+app.register_module(testmodule.mod)
+app.register_module(views.test.mod)
 genshi = Genshi(app)
 context = dict(name='Rudolf')
 
@@ -115,4 +120,19 @@ def fails_without_template_or_string():
     """A template or string must be provided to render"""
     with app.test_request_context():
         render_response(context=context, method='text')
+
+
+@test
+def loads_module_templates():
+    """Templates can be loaded from module packages"""
+    with app.test_request_context():
+        rendered = render_template('testmodule/module-template.txt', context)
+    assert_equal(rendered, 'Hello modular Rudolf\n')
+
+@test
+def overrides_module_templates():
+    """Module templates can be overridden with application templates"""
+    with app.test_request_context():
+        rendered = render_template('testmodule/nonmodule-template.txt', context)
+    assert_equal(rendered, 'Hello nonmodular Rudolf\n')
 

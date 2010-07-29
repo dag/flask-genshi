@@ -13,7 +13,7 @@ from __future__ import absolute_import
 
 from functools import wraps
 from collections import defaultdict
-from os.path import splitext
+import os.path
 from warnings import warn
 
 from genshi.template import (NewTextTemplate, MarkupTemplate,
@@ -92,11 +92,18 @@ class Genshi(object):
     @cached_property
     def template_loader(self):
         """A :class:`genshi.template.TemplateLoader` that loads templates
-        from the same place as Flask.
+        from the same places as Flask.
 
         """
-        path = loader.package(self.app.import_name, 'templates')
-        return TemplateLoader(path, auto_reload=self.app.debug)
+        path = loader.directory(os.path.join(self.app.root_path, 'templates'))
+        module_paths = {}
+        modules = getattr(self.app, 'modules', {})
+        for name, module in modules.iteritems():
+            module_path = os.path.join(module.root_path, 'templates')
+            if os.path.isdir(module_path):
+                module_paths[name] = loader.directory(module_path)
+        return TemplateLoader([path, loader.prefixed(**module_paths)],
+                              auto_reload=self.app.debug)
 
     def filter(self, *methods):
         """Decorator that adds a function to apply filters
@@ -130,7 +137,7 @@ class Genshi(object):
 
         """
         if method is None:
-            ext = splitext(template)[1][1:]
+            ext = os.path.splitext(template)[1][1:]
             return self.extensions[ext]
         return method
 
