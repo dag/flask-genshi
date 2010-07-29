@@ -16,7 +16,8 @@ from collections import defaultdict
 from os.path import splitext
 from warnings import warn
 
-from genshi.template import NewTextTemplate, loader, TemplateLoader
+from genshi.template import (NewTextTemplate, MarkupTemplate,
+                             loader, TemplateLoader)
 from werkzeug import cached_property
 from flask import current_app
 
@@ -145,39 +146,44 @@ def select_method(template, method=None):
     return current_app.genshi_instance._method_for(template, method)
 
 
-def generate_template(template, context=None, method=None):
+def generate_template(template=None, context=None, method=None, string=None):
     """Creates a Genshi template stream that you can
     run filters and transformations on.
 
     """
     genshi = current_app.genshi_instance
     method = genshi._method_for(template, method)
-    class_ = genshi.methods[method].get('class')
+    class_ = genshi.methods[method].get('class', MarkupTemplate)
     context = context or {}
     for key, value in current_app.jinja_env.globals.iteritems():
         context.setdefault(key, value)
     context.setdefault('filters', current_app.jinja_env.filters)
     context.setdefault('tests', current_app.jinja_env.tests)
     current_app.update_template_context(context)
-    template = genshi.template_loader.load(template, cls=class_)
+    if template is not None:
+        template = genshi.template_loader.load(template, cls=class_)
+    elif string is not None:
+        template = class_(string)
+    else:
+        raise RuntimeError('Need a template or string')
     template = template.generate(**context)
     for filter in genshi.filters[method]:
         template = filter(template)
     return template
 
 
-def render_template(template, context=None, method=None):
+def render_template(template=None, context=None, method=None, string=None):
     """Renders a template to a string."""
     genshi = current_app.genshi_instance
     method = genshi._method_for(template, method)
-    template = generate_template(template, context, method)
+    template = generate_template(template, context, method, string)
     render_args = dict(method=genshi.methods[method]['serializer'])
     if 'doctype' in genshi.methods[method]:
         render_args['doctype'] = genshi.methods[method]['doctype']
     return template.render(**render_args)
 
 
-def render_response(template, context=None, method=None):
+def render_response(template=None, context=None, method=None, string=None):
     """Renders a template and wraps it in a :attr:`~flask.Flask.response_class`
     with mimetype set according to the rendering method.
 
@@ -185,6 +191,6 @@ def render_response(template, context=None, method=None):
     genshi = current_app.genshi_instance
     method = genshi._method_for(template, method)
     mimetype = genshi.methods[method].get('mimetype', 'text/html')
-    template = render_template(template, context, method)
+    template = render_template(template, context, method, string)
     return current_app.response_class(template, mimetype=mimetype)
 

@@ -2,7 +2,7 @@
 from __future__ import with_statement
 
 from flask import Flask
-from nose.tools import istest as test, assert_equal
+from nose.tools import istest as test, assert_equal, raises
 from genshi.filters import Transformer
 
 from flaskext.genshi import Genshi, render_response, render_template
@@ -99,4 +99,20 @@ def updates_context():
     """Render calls update the template context with context processors"""
     with app.test_request_context():
         rendered = render_response('context.html')
+
+
+@test
+def renders_strings():
+    """Strings can be rendered as templates directly"""
+    with app.test_request_context():
+        rendered = render_response(string='The name is $name',
+                                   context=context, method='text')
+    assert_equal(rendered.data, 'The name is Rudolf')
+
+@test
+@raises(RuntimeError)
+def fails_without_template_or_string():
+    """A template or string must be provided to render"""
+    with app.test_request_context():
+        render_response(context=context, method='text')
 
