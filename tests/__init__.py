@@ -1,7 +1,7 @@
 
 from __future__ import with_statement
 
-from nose.tools import istest as test, assert_equal, raises
+from nose.tools import istest as test, with_setup, assert_equal, raises
 from flaskext.genshi import render_response, render_template
 from genshi.filters import Transformer
 
@@ -20,6 +20,7 @@ def teardown():
 
 
 @test
+@with_setup(setup, teardown)
 def renders_html():
     """A html extension results in an HTML doctype and mimetype"""
     rendered = render_response('test.html', context)
@@ -30,6 +31,7 @@ def renders_html():
         '<body>Hi Rudolf</body>')
 
 @test
+@with_setup(setup, teardown)
 def renders_text():
     """A txt extension results in no doctype and a text/plain mimetype"""
     rendered = render_response('test.txt', context)
@@ -38,6 +40,7 @@ def renders_text():
 
 
 @test
+@with_setup(setup, teardown)
 def renders_xml():
     """An xml extension results in no doctype and a application/xml mimetype"""
     rendered = render_response('test.xml', context)
@@ -46,6 +49,7 @@ def renders_xml():
 
 
 @test
+@with_setup(setup, teardown)
 def renders_js():
     """A js extension results in no doctype
     and a application/javascript mimetype"""
@@ -55,6 +59,7 @@ def renders_js():
 
 
 @test
+@with_setup(setup, teardown)
 def renders_css():
     """A css extension results in no doctype and a text/css mimetype"""
     rendered = render_response('test.css', context)
@@ -63,6 +68,7 @@ def renders_css():
 
 
 @test
+@with_setup(setup, teardown)
 def renders_svg():
     """An svg extension results in an SVG doctype and mimetype"""
     rendered = render_response('test.svg', context)
@@ -80,6 +86,7 @@ def prepend_title(template):
     return template | Transformer('head/title').prepend('Flask-Genshi - ')
 
 @test
+@with_setup(setup, teardown)
 def applies_filters():
     """Filters are applied for generated and rendered templates"""
     rendered = render_template('filter.html')
@@ -94,12 +101,14 @@ def inject_rudolf():
     return dict(rudolf='The red-nosed reindeer')
 
 @test
+@with_setup(setup, teardown)
 def updates_context():
     """Render calls update the template context with context processors"""
     rendered = render_response('context.html')
 
 
 @test
+@with_setup(setup, teardown)
 def renders_strings():
     """Strings can be rendered as templates directly"""
     rendered = render_response(string='The name is $name',
@@ -107,6 +116,7 @@ def renders_strings():
     assert_equal(rendered.data, 'The name is Rudolf')
 
 @test
+@with_setup(setup, teardown)
 @raises(RuntimeError)
 def fails_without_template_or_string():
     """A template or string must be provided to render"""
@@ -114,12 +124,14 @@ def fails_without_template_or_string():
 
 
 @test
+@with_setup(setup, teardown)
 def loads_module_templates():
     """Templates can be loaded from module packages"""
     rendered = render_template('package_mod/module-template.txt', context)
     assert_equal(rendered, 'Hello modular Rudolf\n')
 
 @test
+@with_setup(setup, teardown)
 def overrides_module_templates():
     """Module templates can be overridden with application templates"""
     rendered = render_template('package_mod/nonmodule-template.txt', context)
