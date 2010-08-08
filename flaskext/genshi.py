@@ -11,7 +11,6 @@
 
 from __future__ import absolute_import
 
-from functools import wraps
 from collections import defaultdict
 import os.path
 from warnings import warn
