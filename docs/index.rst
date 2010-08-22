@@ -116,6 +116,27 @@ This lets you override module templates in your application.
 .. versionadded:: 0.4
 
 
+Context processors
+------------------
+
+Context processors work as expected.
+
+::
+
+    @app.context_processor
+    def add_site_name():
+        return dict(site_name=app.config['SITE_NAME'])
+
+This lets you use ``site_name`` in templates without including it in every
+render call.
+
+.. code-block:: html+genshi
+
+    <title>$site_name</title>
+
+.. versionadded:: 0.4
+
+
 API Reference
 -------------
 
