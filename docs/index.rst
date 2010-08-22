@@ -4,9 +4,22 @@ Flask-Genshi
 .. module:: flaskext.genshi
 
 Flask-Genshi is an extension to `Flask`_ that allows you to easily
-use `Genshi`_ for templating. It knows how to render a template based on the
-file extension and can create :class:`~flask.Response` objects with mimetype
-set accordingly.
+use `Genshi`_ for templating.
+
+Features:
+
+* Render to an ``app.response_class`` based on template filename extension
+  and set mimetype and doctype accordingly
+* Easy switching of ie. HTML rendering methods (HTML4, XHTML, HTML…)
+* Genshi filters with a syntax fit for Flask
+* Flask Jinja globals, filters and tests
+* :class:`flask.Module` templates loading
+* Flask context processors
+* Rendering from strings
+
+Not quite yet, but planned:
+
+* Signals
 
 Source code and issue tracking at `Bitbucket`_.
 
