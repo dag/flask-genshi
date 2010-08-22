@@ -204,4 +204,3 @@ def render_response(template=None, context=None, method=None, string=None):
     mimetype = genshi.methods[method].get('mimetype', 'text/html')
     template = render_template(template, context, method, string)
     return current_app.response_class(template, mimetype=mimetype)
-

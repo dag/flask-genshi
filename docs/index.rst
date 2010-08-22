@@ -31,7 +31,7 @@ You need to construct a :class:`Genshi` with your
 ::
 
     from flaskext.genshi import Genshi
-    
+
     app = Flask(__name__)
     genshi = Genshi(app)
 
@@ -42,7 +42,7 @@ and sets the right doctype for you.
 Use it like so::
 
     from flaskext.genshi import render_response
-    
+
     @app.route('/')
     def index():
         title = 'Genshi + Flask, a match made in heaven!'
@@ -80,6 +80,25 @@ which is not XML-based. Rendering javascript with templates gives you tools
 like :func:`flask.url_for` and rendering CSS with templates gives you
 dynamic stylesheets with things like variables.
 
+
+Using Jinja filters and tests
+-----------------------------
+
+Flask-Genshi supports tests and filters from Jinja:
+
+.. code-block:: html+genshi
+
+    <p class="${'even' if tests.even(1) else 'odd'}">
+        ${filters.truncate('Hello World', 10)}
+    </p>
+
+Result:
+
+.. code-block:: html
+
+    <p class="odd">
+        Hello ...
+    </p>
 
 API Reference
 -------------
