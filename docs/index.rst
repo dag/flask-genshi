@@ -100,6 +100,22 @@ Result:
         Hello ...
     </p>
 
+
+Module templates
+----------------
+
+Flask can load templates specific to a :class:`flask.Module` and
+Flask-Genshi also supports this. It works just like in Flask::
+
+    render_response('modname/template.html')
+
+This will first look for ie. ``app/templates/modname/template.html``
+and if not found, ie. ``app/mods/modname/templates/template.html``.
+This lets you override module templates in your application.
+
+.. versionadded:: 0.4
+
+
 API Reference
 -------------
 
