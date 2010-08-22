@@ -160,6 +160,8 @@ strings as templates::
 
 The same pattern applies to all functions.
 
+.. versionadded:: 0.4
+
 
 API Reference
 -------------
