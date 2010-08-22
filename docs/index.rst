@@ -150,6 +150,17 @@ render call.
 .. versionadded:: 0.4
 
 
+Render from strings
+-------------------
+
+Like :func:`flask.render_template_string`, Flask-Genshi lets you render
+strings as templates::
+
+    render_response(string='Hello $name', context={'name': 'World'}, method='text')
+
+The same pattern applies to all functions.
+
+
 API Reference
 -------------
 
