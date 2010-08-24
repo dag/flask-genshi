@@ -52,7 +52,7 @@ setup(
     tests_require=['nose'],
     install_requires=[
         'Flask',
-        'Genshi'
+        'Genshi>=0.5'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
