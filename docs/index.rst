@@ -8,8 +8,8 @@ use `Genshi`_ for templating.
 
 Features:
 
-* Render to an ``app.response_class`` based on template filename extension
-  and set mimetype and doctype accordingly
+* Render to a :attr:`~flask.Flask.response_class` based on
+  template filename extension and set mimetype and doctype accordingly
 * Easy switching of ie. HTML rendering methods (HTML4, XHTML, HTML…)
 * Genshi filters with a syntax fit for Flask
 * Flask Jinja globals, filters and tests
