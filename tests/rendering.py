@@ -5,7 +5,6 @@ from flaskext.genshi import render_response
 from flask import g
 
 from .utils import test
-from .flask_genshi_testapp import app
 
 
 @test
@@ -27,8 +26,8 @@ def renders_text():
 
     rendered = render_response('test.txt', g.context)
 
-    assert rendered.mimetype =='text/plain'
-    assert rendered.data =='Hi Rudolf\n'
+    assert rendered.mimetype == 'text/plain'
+    assert rendered.data == 'Hi Rudolf\n'
 
 
 @test
@@ -37,8 +36,8 @@ def renders_xml():
 
     rendered = render_response('test.xml', g.context)
 
-    assert rendered.mimetype =='application/xml'
-    assert rendered.data =='<name>Rudolf</name>'
+    assert rendered.mimetype == 'application/xml'
+    assert rendered.data == '<name>Rudolf</name>'
 
 
 @test
@@ -50,8 +49,8 @@ def renders_js():
 
     rendered = render_response('test.js', g.context)
 
-    assert rendered.mimetype =='application/javascript'
-    assert rendered.data =='alert("Rudolf");\n'
+    assert rendered.mimetype == 'application/javascript'
+    assert rendered.data == 'alert("Rudolf");\n'
 
 
 @test
@@ -60,8 +59,8 @@ def renders_css():
 
     rendered = render_response('test.css', g.context)
 
-    assert rendered.mimetype =='text/css'
-    assert rendered.data =='h1:after { content: " Rudolf"; }\n'
+    assert rendered.mimetype == 'text/css'
+    assert rendered.data == 'h1:after { content: " Rudolf"; }\n'
 
 
 @test
@@ -75,6 +74,5 @@ def renders_svg():
                      '<text x="250" y="150" font-size="55">Hi Rudolf</text>\n'
                      '</svg>')
 
-    assert rendered.mimetype =='image/svg+xml'
+    assert rendered.mimetype == 'image/svg+xml'
     assert rendered.data == expected_data
-

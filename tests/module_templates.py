@@ -23,4 +23,3 @@ def overrides_module_templates():
     rendered = render_template('package_mod/nonmodule-template.txt', g.context)
 
     assert rendered == 'Hello nonmodular Rudolf\n'
-

@@ -16,5 +16,4 @@ def inject_rudolf():
 def updates_context():
     """Render calls update the template context with context processors"""
 
-    rendered = render_response('context.html')
-
+    render_response('context.html')

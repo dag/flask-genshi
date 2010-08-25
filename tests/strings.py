@@ -15,7 +15,7 @@ def renders_strings():
     rendered = render_response(string='The name is $name',
                                context=g.context, method='text')
 
-    assert rendered.data =='The name is Rudolf'
+    assert rendered.data == 'The name is Rudolf'
 
 
 @test
@@ -24,4 +24,3 @@ def fails_without_template_or_string():
     """A template or string must be provided to render"""
 
     render_response(context=g.context, method='text')
-

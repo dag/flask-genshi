@@ -21,4 +21,3 @@ def test(f):
             f()
 
     return wrapper
-
