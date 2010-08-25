@@ -22,12 +22,22 @@ from flask import current_app
 
 
 class Genshi(object):
+    """Initialize extension.
 
-    def __init__(self, app):
+    ::
 
-        app.genshi_instance = self
+        app = Flask(__name__)
+        genshi = Genshi(app)
 
-        self.app = app
+    .. versionchanged:: 0.4
+        You can now initialize your application later with :meth:`init_app`.
+
+    """
+
+    def __init__(self, app=None):
+
+        if app is not None:
+            self.init_app(app)
 
         #: What method is used for an extension.
         self.extensions = {
@@ -87,6 +97,25 @@ class Genshi(object):
         #:
         #: .. versionadded:: 0.3
         self.filters = defaultdict(list)
+
+    def init_app(self, app):
+        """Initialize a :class:`~flask.Flask` application
+        for use with this extension. Useful for the factory pattern but
+        not needed if you passed your application to the :class:`Genshi`
+        constructor.
+
+        ::
+
+            genshi = Genshi()
+
+            app = Flask(__name__)
+            genshi.init_app(app)
+
+        .. versionadded:: 0.4
+
+        """
+        app.genshi_instance = self
+        self.app = app
 
     @cached_property
     def template_loader(self):

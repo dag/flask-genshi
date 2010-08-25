@@ -5,7 +5,7 @@ from genshi.filters import Transformer
 from flaskext.genshi import render_template
 
 from .utils import test
-from .flask_genshi_testapp import genshi
+from .flask_genshi_testapp.extensions import genshi
 
 
 @genshi.filter('html')
@@ -23,4 +23,3 @@ def applies_filters():
                 '<html><head><title>Flask-Genshi - Hi!</title></head></html>')
 
     assert rendered == expected
-
