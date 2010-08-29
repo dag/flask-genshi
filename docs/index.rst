@@ -10,7 +10,8 @@ Features:
 
 * Render to a :attr:`~flask.Flask.response_class` based on
   template filename extension and set mimetype and doctype accordingly
-* Easy switching of ie. HTML rendering methods (HTML4, XHTML, HTML…)
+* Easy switching of rendering methods, i.e.,
+  output HTML as HTML4, XHTML, HTML5…
 * Genshi filters with a syntax fit for Flask
 * Flask Jinja globals, filters and tests
 * :class:`flask.Module` templates loading
@@ -122,8 +123,8 @@ Flask-Genshi also supports this. It works just like in Flask::
 
     render_response('modname/template.html')
 
-This will first look for ie. ``app/templates/modname/template.html``
-and if not found, ie. ``app/mods/modname/templates/template.html``.
+This will first look for, e.g. ``app/templates/modname/template.html``,
+and if not found, e.g. ``app/mods/modname/templates/template.html``.
 This lets you override module templates in your application.
 
 .. versionadded:: 0.4
