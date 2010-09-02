@@ -18,7 +18,7 @@ from warnings import warn
 from genshi.template import (NewTextTemplate, MarkupTemplate,
                              loader, TemplateLoader)
 from werkzeug import cached_property
-from flask import current_app
+from flask import Flask, current_app
 
 
 class Genshi(object):
@@ -31,6 +31,9 @@ class Genshi(object):
 
     .. versionchanged:: 0.4
         You can now initialize your application later with :meth:`init_app`.
+
+    .. deprecated:: 0.4
+        ``app.genshi_instance`` in favor of ``app.extensions['genshi']``.
 
     """
 
@@ -114,6 +117,10 @@ class Genshi(object):
         .. versionadded:: 0.4
 
         """
+        if not hasattr(app, 'extensions'):
+            app.extensions = {}
+
+        app.extensions['genshi'] = self
         app.genshi_instance = self
         self.app = app
 
@@ -178,7 +185,7 @@ def select_method(template, method=None):
     """
     warn('select_method to be dropped in future releases',
          DeprecationWarning, stacklevel=2)
-    return current_app.genshi_instance._method_for(template, method)
+    return current_app.extensions['genshi']._method_for(template, method)
 
 
 def generate_template(template=None, context=None, method=None, string=None):
@@ -186,7 +193,7 @@ def generate_template(template=None, context=None, method=None, string=None):
     run filters and transformations on.
 
     """
-    genshi = current_app.genshi_instance
+    genshi = current_app.extensions['genshi']
     method = genshi._method_for(template, method)
     class_ = genshi.methods[method].get('class', MarkupTemplate)
 
@@ -214,7 +221,7 @@ def generate_template(template=None, context=None, method=None, string=None):
 
 def render_template(template=None, context=None, method=None, string=None):
     """Renders a template to a string."""
-    genshi = current_app.genshi_instance
+    genshi = current_app.extensions['genshi']
     method = genshi._method_for(template, method)
     template = generate_template(template, context, method, string)
     render_args = dict(method=genshi.methods[method]['serializer'])
@@ -228,7 +235,7 @@ def render_response(template=None, context=None, method=None, string=None):
     with mimetype set according to the rendering method.
 
     """
-    genshi = current_app.genshi_instance
+    genshi = current_app.extensions['genshi']
     method = genshi._method_for(template, method)
     mimetype = genshi.methods[method].get('mimetype', 'text/html')
     template = render_template(template, context, method, string)
