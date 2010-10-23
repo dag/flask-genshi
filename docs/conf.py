@@ -99,7 +99,7 @@ html_theme = 'flask_small'
 # documentation.
 html_theme_options = {
     'index_logo': 'flask-genshi.png',
-    'github_fork': None
+    'github_fork': 'dag/flask-genshi'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

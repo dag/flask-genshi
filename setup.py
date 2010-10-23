@@ -20,7 +20,7 @@ and have the mimetype set automatically for you.
         title = 'Genshi + Flask, a match made in heaven!'
         return render_response('index.html', dict(title=title))
 
-You can install the `development version`_ from `Bitbucket`_
+You can install the `development version`_ from `GitHub`_
 with ``easy_install Flask-Genshi==dev`` but you probably want the
 latest stable release::
 
@@ -29,8 +29,8 @@ latest stable release::
 .. _Flask-Genshi: http://packages.python.org/Flask-Genshi/
 .. _Flask: http://flask.pocoo.org/
 .. _Genshi: http://genshi.edgewall.org/
-.. _development version: http://bitbucket.org/dag/flask-genshi/get/tip.gz#egg=Flask-Genshi-dev
-.. _Bitbucket: http://bitbucket.org/dag/flask-genshi
+.. _development version: http://github.com/dag/flask-genshi/zipball/master#egg=Flask-Genshi-dev
+.. _GitHub: http://github.com/dag/flask-genshi
 """
 from setuptools import setup
 

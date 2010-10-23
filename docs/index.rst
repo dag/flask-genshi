@@ -22,8 +22,6 @@ Not quite yet, but planned:
 
 * Signals
 
-Source code and issue tracking at `Bitbucket`_.
-
 
 Installation
 ------------
@@ -179,4 +177,3 @@ API Reference
 
 .. _Flask: http://flask.pocoo.org/
 .. _Genshi: http://genshi.edgewall.org/
-.. _Bitbucket: http://bitbucket.org/dag/flask-genshi
