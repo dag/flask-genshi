@@ -1,5 +1,7 @@
 *.py[co]
-docs/_build/*
-Flask_Genshi.egg-info/*
-build/*
+*.swp
+docs/_build/
+Flask_Genshi.egg-info/
+build/
 dist/
+.pida-metadata/
