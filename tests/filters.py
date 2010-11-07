@@ -39,6 +39,7 @@ def applies_filters():
 
 @test
 def works_with_flatland():
+    """Filters can take the context and support flatland"""
 
     context = dict(form=TestForm({'username': 'dag'}))
     rendered = render_template('flatland.html', context)
