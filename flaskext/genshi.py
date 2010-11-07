@@ -19,7 +19,7 @@ from inspect import getargspec
 from genshi.template import (NewTextTemplate, MarkupTemplate,
                              loader, TemplateLoader)
 from werkzeug import cached_property
-from flask import Flask, current_app
+from flask import current_app
 
 
 class Genshi(object):
