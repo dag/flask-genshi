@@ -162,6 +162,28 @@ The same pattern applies to all functions.
 .. versionadded:: 0.4
 
 
+Using with flatland
+-------------------
+
+First, add the flatland filter::
+
+    from flatland.out.genshi import flatland_filter
+
+    @genshi.filter('html')
+    def inject_flatland(template, context):
+        return flatland_filter(template, context)
+
+Don't forget the form namespace:
+
+.. code-block:: html+genshi
+
+    <html xmlns:form="http://ns.discorporate.us/flatland/genshi">
+        <input type="text" form:bind="form.username"/>
+    </html>
+
+.. versionadded:: 0.5
+
+
 API Reference
 -------------
 

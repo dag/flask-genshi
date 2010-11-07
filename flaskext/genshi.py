@@ -14,6 +14,7 @@ from __future__ import absolute_import
 from collections import defaultdict
 import os.path
 from warnings import warn
+from inspect import getargspec
 
 from genshi.template import (NewTextTemplate, MarkupTemplate,
                              loader, TemplateLoader)
@@ -158,6 +159,9 @@ class Genshi(object):
 
         .. versionadded:: 0.3
 
+        .. versionchanged:: 0.5
+            Filters can now optionally take a second argument for the context.
+
         """
         def decorator(function):
             for method in methods:
@@ -214,7 +218,10 @@ def generate_template(template=None, context=None, method=None, string=None):
     template = template.generate(**context)
 
     for filter in genshi.filters[method]:
-        template = filter(template)
+        if len(getargspec(filter)[0]) == 2:  # Filter takes context?
+            template = filter(template, context)
+        else:
+            template = filter(template)
 
     return template
 

@@ -20,7 +20,7 @@ setup(
     zip_safe=False,
     platforms='any',
     test_suite='nose.collector',
-    tests_require=['nose'],
+    tests_require=['nose', 'flatland'],
     install_requires=[
         'Flask',
         'Genshi>=0.5'
