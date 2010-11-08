@@ -8,19 +8,18 @@ use `Genshi`_ for templating.
 
 Features:
 
-* Render to a :attr:`~flask.Flask.response_class` based on
-  template filename extension and set mimetype and doctype accordingly
-* Easy switching of rendering methods, i.e.,
-  output HTML as HTML4, XHTML, HTML5…
-* Genshi filters with a syntax fit for Flask
-* Flask Jinja globals, filters and tests
-* :class:`flask.Module` templates loading
-* Flask context processors
-* Rendering from strings
+* Integrates with most of Flask and works with Flask-Babel for
+  internationalization and flatland for form processing (that is, the
+  special support flatland has for Genshi). Other extensions such as
+  Flask-WTF and Flask-Creole should work fine too.
+* Selects configurable rendering methods from the template filename, taking
+  care of the mimetype, doctype and XML serialization, i.e., how to close
+  tags et cetera.
 
-Not quite yet, but planned:
+Not yet:
 
-* Signals
+* Signals. Easy to add but need to research what to pass to signals.
+* Flask-Theme probably does not work with Genshi templates.
 
 
 Installation
