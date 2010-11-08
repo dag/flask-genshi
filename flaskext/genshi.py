@@ -43,6 +43,14 @@ class Genshi(object):
         if app is not None:
             self.init_app(app)
 
+        #: A callable for Genshi's callback interface, called when a template
+        #: is loaded, with the template as the only argument.
+        #:
+        #: :meth:`template_parsed` is a decorator for setting this.
+        #:
+        #: .. versionadded:: 0.5
+        self.callback = None
+
         #: What method is used for an extension.
         self.extensions = {
             'html': 'html',
@@ -125,6 +133,17 @@ class Genshi(object):
         app.genshi_instance = self
         self.app = app
 
+    def template_parsed(self, callback):
+        """Set up a calback to be called with a template when it is first
+        loaded and parsed. This is the correct way to set up the
+        :class:`~genshi.filters.Translator` filter.
+
+        .. versionadded:: 0.5
+
+        """
+        self.callback = callback
+        return callback
+
     @cached_property
     def template_loader(self):
         """A :class:`genshi.template.TemplateLoader` that loads templates
@@ -139,7 +158,8 @@ class Genshi(object):
             if os.path.isdir(module_path):
                 module_paths[name] = loader.directory(module_path)
         return TemplateLoader([path, loader.prefixed(**module_paths)],
-                              auto_reload=self.app.debug)
+                              auto_reload=self.app.debug,
+                              callback=self.callback)
 
     def filter(self, *methods):
         """Decorator that adds a function to apply filters

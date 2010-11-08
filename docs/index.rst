@@ -184,6 +184,35 @@ Don't forget the form namespace:
 .. versionadded:: 0.5
 
 
+Using with Flask-Babel
+----------------------
+
+You can use Flask-Genshi with `Flask-Babel`_ for internationalization.
+First, set up the :class:`~genshi.filters.Translator` filter with
+the callback interface via :meth:`~Genshi.template_parsed`::
+
+    from genshi.filters import Translator
+    from flaskext.babel import gettext
+
+    @genshi.template_parsed
+    def callback(template):
+        Translator(gettext).setup(template)
+
+You'll want a ``babel.cfg`` similar to this one:
+
+.. code-block:: ini
+
+    [python: **.py]
+    [genshi:**/templates/**.html]
+    [genshi:**/templates/**.txt]
+    template_class = genshi.template.NewTextTemplate
+
+Consult the Genshi documentation on `Internationalization and Localization`_
+for details on extracting translation strings from Genshi templates.
+
+.. versionadded:: 0.5
+
+
 API Reference
 -------------
 
@@ -199,3 +228,6 @@ API Reference
 
 .. _Flask: http://flask.pocoo.org/
 .. _Genshi: http://genshi.edgewall.org/
+.. _Flask-Babel: http://packages.python.org/Flask-Babel/
+.. _Internationalization and Localization:
+    http://genshi.edgewall.org/wiki/Documentation/0.6.x/i18n.html

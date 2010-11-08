@@ -2,12 +2,12 @@
 from __future__ import absolute_import
 
 from genshi.filters import Transformer
+from flask import current_app
 from flaskext.genshi import render_template
 from flatland.out.genshi import flatland_filter
 from flatland import Form, String
 
 from .utils import test
-from .flask_genshi_testapp.extensions import genshi
 
 
 class TestForm(Form):
@@ -15,19 +15,15 @@ class TestForm(Form):
     username = String
 
 
-@genshi.filter('html')
-def prepend_title(template):
-    return template | Transformer('head/title').prepend('Flask-Genshi - ')
-
-
-@genshi.filter('html')
-def inject_flatland(template, context):
-    return flatland_filter(template, context)
-
-
 @test
 def applies_filters():
     """Filters are applied for generated and rendered templates"""
+
+    genshi = current_app.extensions['genshi']
+    @genshi.filter('html')
+    def prepend_title(template):
+        return template | Transformer('head/title').prepend('Flask-Genshi - ')
+
 
     rendered = render_template('filter.html')
     expected = ('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
@@ -40,6 +36,11 @@ def applies_filters():
 @test
 def works_with_flatland():
     """Filters can take the context and support flatland"""
+
+    genshi = current_app.extensions['genshi']
+    @genshi.filter('html')
+    def inject_flatland(template, context):
+        return flatland_filter(template, context)
 
     context = dict(form=TestForm({'username': 'dag'}))
     rendered = render_template('flatland.html', context)

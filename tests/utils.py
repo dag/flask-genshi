@@ -6,7 +6,7 @@ from functools import wraps
 from nose.tools import nottest, istest
 from flask import g
 
-from flask_genshi_testapp import app
+from flask_genshi_testapp import create_app
 
 
 @nottest
@@ -16,6 +16,7 @@ def test(f):
     @istest
     @wraps(f)
     def wrapper():
+        app = create_app()
         with app.test_request_context():
             g.context = dict(name='Rudolf')
             f()
