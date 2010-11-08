@@ -32,6 +32,7 @@ engine. Why would Genshi possibly be interesting?
 * Templates are rarely the culprit in application performance. If Genshi does
   become a culprit you can render your templates with `Chameleon`_ which
   performs very well.
+
 * XML lends itself naturally to templating HTML. Genshi templates are usually
   much more terse and readable because Python constructs can be terminated by
   the XML end tags and translation strings can be extracted directly from
@@ -58,9 +59,15 @@ engine. Why would Genshi possibly be interesting?
       <p py:if="show_paragraph">Example paragraph with $variable content</p>
 
 * For better or worse, Python in Genshi templates is really Python. The only
-  difference is that, like Jinja, attribute access falls back on item access
-  and vice versa. You need only know some basic Python and XML to write
-  Genshi templates.
+  difference is that, like with Jinja, attribute access falls back on item
+  access and vice versa. You need only know some basic Python and XML to write
+  Genshi templates, and you can use existing XML tools such as support in editors.
+
+* Because invalid XML results in template errors, valid output is enforced without
+  a need to use HTML validators. You get the benefits of XHTML with browser-friendly
+  output, and you can swap the output format on-the-fly. You're also writing actual
+  XML so no need for those pesky spaces in self-closing tags: ``<hr/>`` will render
+  to HTML as ``<hr>`` and to XHTML as ``<hr />``.
 
 Installation
 ------------
