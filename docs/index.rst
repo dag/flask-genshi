@@ -20,7 +20,47 @@ Not yet:
 
 * Signals. Easy to add but need to research what to pass to signals.
 * Flask-Theme probably does not work with Genshi templates.
+* `Chameleon`_, not sure if it should be a separate extension or not.
 
+Why Genshi?
+-----------
+
+Genshi is one of the slower templating toolkits, the idea of writing XML for
+templating seem horrifying and Jinja is a very nice text-based template
+engine. Why would Genshi possibly be interesting?
+
+* Templates are rarely the culprit in application performance. If Genshi does
+  become a culprit you can render your templates with `Chameleon`_ which
+  performs very well.
+* XML lends itself naturally to templating HTML. Genshi templates are usually
+  much more terse and readable because Python constructs can be terminated by
+  the XML end tags and translation strings can be extracted directly from
+  the content of text elements.
+
+  We can also operate programmatically on template streams and run filters
+  and transformations. We can have a layout template extract a subtitle from
+  a page template's title tag. Many possibilities.
+
+  Take this Jinja template:
+
+  .. code-block:: jinja
+
+      {% block title %}Page Title{% endblock %}
+      {% if show_paragraph %}
+        <p>{% trans %}Example paragraph with {{ variable }} content{% endtrans %}
+      {% endif %}
+
+  Compare with the Genshi version:
+
+  .. code-block:: html+genshi
+
+      <title>Page Title</title>
+      <p py:if="show_paragraph">Example paragraph with $variable content</p>
+
+* For better or worse, Python in Genshi templates is really Python. The only
+  difference is that, like Jinja, attribute access falls back on item access
+  and vice versa. You need only know some basic Python and XML to write
+  Genshi templates.
 
 Installation
 ------------
@@ -100,7 +140,7 @@ Flask-Genshi supports tests and filters from Jinja:
 .. code-block:: html+genshi
 
     <p class="${'even' if tests.even(1) else 'odd'}">
-        ${filters.truncate('Hello World', 10)}
+      ${filters.truncate('Hello World', 10)}
     </p>
 
 Result:
@@ -108,7 +148,7 @@ Result:
 .. code-block:: html
 
     <p class="odd">
-        Hello ...
+      Hello ...
     </p>
 
 
@@ -177,7 +217,7 @@ Don't forget the form namespace:
 .. code-block:: html+genshi
 
     <html xmlns:form="http://ns.discorporate.us/flatland/genshi">
-        <input type="text" form:bind="form.username"/>
+      <input type="text" form:bind="form.username"/>
     </html>
 
 .. versionadded:: 0.5
@@ -228,5 +268,6 @@ API Reference
 .. _Flask: http://flask.pocoo.org/
 .. _Genshi: http://genshi.edgewall.org/
 .. _Flask-Babel: http://packages.python.org/Flask-Babel/
+.. _Chameleon: http://chameleon.repoze.org/docs/latest/genshi.html
 .. _Internationalization and Localization:
     http://genshi.edgewall.org/wiki/Documentation/0.6.x/i18n.html
