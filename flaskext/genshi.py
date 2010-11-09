@@ -21,6 +21,15 @@ from genshi.template import (NewTextTemplate, MarkupTemplate,
 from werkzeug import cached_property
 from flask import current_app
 
+try:
+    from flask import signals_available
+except ImportError:
+    signals_available = False
+else:
+    from flask.signals import Namespace
+    signals = Namespace()
+    template_generated = signals.signal('template-generated')
+
 
 class Genshi(object):
     """Initialize extension.
@@ -235,15 +244,19 @@ def generate_template(template=None, context=None, method=None, string=None):
     else:
         raise RuntimeError('Need a template or string')
 
-    template = template.generate(**context)
+    stream = template.generate(**context)
+
+    if signals_available:
+        template_generated.send(current_app._get_current_object(),
+                                template=template, context=context)
 
     for filter in genshi.filters[method]:
         if len(getargspec(filter)[0]) == 2:  # Filter takes context?
-            template = filter(template, context)
+            stream = filter(stream, context)
         else:
-            template = filter(template)
+            stream = filter(stream)
 
-    return template
+    return stream
 
 
 def render_template(template=None, context=None, method=None, string=None):

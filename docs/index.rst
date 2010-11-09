@@ -8,7 +8,7 @@ use `Genshi`_ for templating.
 
 Features:
 
-* Integrates with most of Flask and works with Flask-Babel for
+* Integrates fully with Flask and works with Flask-Babel for
   internationalization and flatland for form processing (that is, the
   special support flatland has for Genshi). Other extensions such as
   Flask-WTF and Flask-Creole should work fine too.
@@ -18,7 +18,6 @@ Features:
 
 Not yet:
 
-* Signals. Easy to add but need to research what to pass to signals.
 * Flask-Theme probably does not work with Genshi templates.
 * `Chameleon`_, not sure if it should be a separate extension or not.
 
@@ -271,11 +270,29 @@ for details on extracting translation strings from Genshi templates.
 .. versionadded:: 0.5
 
 
+Signal support
+--------------
+
+Flask-Genshi supports a signal similar to :data:`flask.template_rendered`
+called :data:`template_generated`. It is sent the template object and the
+context that was used to generate the template stream, when one is
+successfully generated.
+
+.. versionadded:: 0.5
+
+
 API Reference
 -------------
 
 .. autoclass:: Genshi
     :members:
+
+.. data:: template_generated
+
+   Signal emitted when a template stream has been successfully generated,
+   passing `template` and `context` via the app as sender.
+
+   .. versionadded:: 0.5
 
 .. autofunction:: generate_template
 
