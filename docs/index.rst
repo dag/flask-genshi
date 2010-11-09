@@ -131,12 +131,24 @@ to the templating functions::
 
     render_response('video.html', method='html5')
 
-The extensions `html`, `xml`, `txt`, `js`, `css` and `svg` are recognized,
-but you can add any extension and method you like. Note that `txt`, `js`
-and `css` templates are rendered with :class:`genshi.template.NewTextTemplate`
-which is not XML-based. Rendering javascript with templates gives you tools
-like :func:`flask.url_for` and rendering CSS with templates gives you
-dynamic stylesheets with things like variables.
+You can add and edit any methods and extensions you like,
+here are the defaults:
+
+=========== ========= ================= ==================================
+Method      Extension Template Language Output
+=========== ========= ================= ==================================
+``'html'``  `.html`   `XML based`_      HTML 4.01 Strict
+``'html5'``           `XML based`_      HTML 5
+``'xhtml'``           `XML based`_      XHTML 1.0 Strict
+``'xml'``   `.xml`    `XML based`_      :mimetype:`application/xml`
+``'svg'``   `.svg`    `XML based`_      SVG 1.1
+``'text'``  `.txt`    `Text based`_     :mimetype:`text/plain`
+``'js'``    `.js`     `Text based`_     :mimetype:`application/javascript`
+``'css'``   `.css`    `Text based`_     :mimetype:`text/css`
+=========== ========= ================= ==================================
+
+.. _XML based: http://genshi.edgewall.org/wiki/Documentation/0.6.x/xml-templates.html
+.. _Text based: http://genshi.edgewall.org/wiki/Documentation/0.6.x/text-templates.html
 
 
 Using Jinja filters and tests
