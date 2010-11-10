@@ -281,6 +281,34 @@ successfully generated.
 .. versionadded:: 0.5
 
 
+Filtering template streams
+--------------------------
+
+You can apply filters to templates that you render globally per rendering
+method::
+
+    from genshi.filters import Transformer
+
+    @genshi.filter('html')
+    def prepend_title(template):
+        return template | Transformer('head/title').prepend('MySite - ')
+
+Alternatively, since version 0.5, you can apply a filter for a template as
+you render it, more repetitive but with more control::
+
+    render_response('index.html', filter=prepend_title)
+
+See the `Genshi documentation
+<http://genshi.edgewall.org/wiki/Documentation/0.6.x/filters.html>`_
+for more filters you can use.
+
+.. versionadded:: 0.3
+
+.. versionchanged:: 0.5 Filters can now optionally take a second argument for the context.
+
+.. versionchanged:: 0.5 You can now apply filters on a per-render basis.
+
+
 API Reference
 -------------
 

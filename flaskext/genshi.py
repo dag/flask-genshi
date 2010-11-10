@@ -174,18 +174,6 @@ class Genshi(object):
         """Decorator that adds a function to apply filters
         to templates by rendering method.
 
-        Example::
-
-            from genshi.filters import Transformer
-
-            @genshi.filter('html')
-            def prepend_title(template):
-                return template | Transformer('head/title').prepend('MySite - ')
-
-        See the `Genshi documentation
-        <http://genshi.edgewall.org/wiki/Documentation/0.6.x/filters.html>`_
-        for more filters you can use.
-
         .. versionadded:: 0.3
 
         .. versionchanged:: 0.5
@@ -221,7 +209,8 @@ def select_method(template, method=None):
     return current_app.extensions['genshi']._method_for(template, method)
 
 
-def generate_template(template=None, context=None, method=None, string=None):
+def generate_template(template=None, context=None,
+                      method=None, string=None, filter=None):
     """Creates a Genshi template stream that you can
     run filters and transformations on.
 
@@ -250,7 +239,13 @@ def generate_template(template=None, context=None, method=None, string=None):
         template_generated.send(current_app._get_current_object(),
                                 template=template, context=context)
 
-    for filter in genshi.filters[method]:
+    for func in genshi.filters[method]:
+        if len(getargspec(func)[0]) == 2:  # Filter takes context?
+            stream = func(stream, context)
+        else:
+            stream = func(stream)
+
+    if filter:
         if len(getargspec(filter)[0]) == 2:  # Filter takes context?
             stream = filter(stream, context)
         else:
@@ -259,18 +254,20 @@ def generate_template(template=None, context=None, method=None, string=None):
     return stream
 
 
-def render_template(template=None, context=None, method=None, string=None):
+def render_template(template=None, context=None,
+                    method=None, string=None, filter=None):
     """Renders a template to a string."""
     genshi = current_app.extensions['genshi']
     method = genshi._method_for(template, method)
-    template = generate_template(template, context, method, string)
+    template = generate_template(template, context, method, string, filter)
     render_args = dict(method=genshi.methods[method]['serializer'])
     if 'doctype' in genshi.methods[method]:
         render_args['doctype'] = genshi.methods[method]['doctype']
     return template.render(**render_args)
 
 
-def render_response(template=None, context=None, method=None, string=None):
+def render_response(template=None, context=None,
+                    method=None, string=None, filter=None):
     """Renders a template and wraps it in a :attr:`~flask.Flask.response_class`
     with mimetype set according to the rendering method.
 
@@ -278,5 +275,5 @@ def render_response(template=None, context=None, method=None, string=None):
     genshi = current_app.extensions['genshi']
     method = genshi._method_for(template, method)
     mimetype = genshi.methods[method].get('mimetype', 'text/html')
-    template = render_template(template, context, method, string)
+    template = render_template(template, context, method, string, filter)
     return current_app.response_class(template, mimetype=mimetype)
