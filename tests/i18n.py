@@ -1,14 +1,22 @@
+from __future__ import with_statement
 
-from __future__ import absolute_import
-
+from attest import Tests, Assert
 from flask import current_app
 from genshi.filters import Translator
 from flaskext.genshi import render_template
 
-from .utils import test
+from tests.utils import appcontext
 
 
-@test
+i18n = Tests()
+
+@i18n.context
+def context():
+    with appcontext():
+        yield
+
+
+@i18n.test
 def does_translations():
     """Callback interface is able to inject Translator filter"""
 
@@ -17,9 +25,9 @@ def does_translations():
     def callback(template):
         Translator(lambda s: s.upper()).setup(template)
 
-    rendered = render_template('i18n.html')
+    rendered = Assert(render_template('i18n.html'))
     expected = ('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
                 '"http://www.w3.org/TR/html4/strict.dtd">\n'
                 '<p>HELLO!</p>')
 
-    assert rendered == expected, rendered
+    assert rendered == expected

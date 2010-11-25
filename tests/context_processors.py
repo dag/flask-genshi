@@ -1,13 +1,21 @@
+from __future__ import with_statement
 
-from __future__ import absolute_import
-
+from attest import Tests
 from flask import current_app
 from flaskext.genshi import render_response
 
-from .utils import test
+from tests.utils import appcontext
 
 
-@test
+contexts = Tests()
+
+@contexts.context
+def context():
+    with appcontext():
+        yield
+
+
+@contexts.test
 def updates_context():
     """Render calls update the template context with context processors"""
 

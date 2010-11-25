@@ -1,17 +1,25 @@
+from __future__ import with_statement
 
-from __future__ import absolute_import
+from attest import Tests, Assert
 
 from flaskext.genshi import render_response
-from flask import g
 
-from .utils import test
+from tests.utils import appcontext
 
 
-@test
-def renders_html():
+rendering = Tests()
+
+@rendering.context
+def context():
+    with appcontext():
+        yield dict(name='Rudolf')
+
+
+@rendering.test
+def renders_html(context):
     """A html extension results in an HTML doctype and mimetype"""
 
-    rendered = render_response('test.html', g.context)
+    rendered = Assert(render_response('test.html', context))
     expected_data = ('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
                      '"http://www.w3.org/TR/html4/strict.dtd">\n'
                      '<body>Hi Rudolf</body>')
@@ -20,54 +28,54 @@ def renders_html():
     assert rendered.data == expected_data
 
 
-@test
-def renders_text():
+@rendering.test
+def renders_text(context):
     """A txt extension results in no doctype and a text/plain mimetype"""
 
-    rendered = render_response('test.txt', g.context)
+    rendered = Assert(render_response('test.txt', context))
 
     assert rendered.mimetype == 'text/plain'
     assert rendered.data == 'Hi Rudolf\n'
 
 
-@test
-def renders_xml():
+@rendering.test
+def renders_xml(context):
     """An xml extension results in no doctype and a application/xml mimetype"""
 
-    rendered = render_response('test.xml', g.context)
+    rendered = Assert(render_response('test.xml', context))
 
     assert rendered.mimetype == 'application/xml'
     assert rendered.data == '<name>Rudolf</name>'
 
 
-@test
-def renders_js():
+@rendering.test
+def renders_js(context):
     """A js extension results in no doctype
     and a application/javascript mimetype
 
     """
 
-    rendered = render_response('test.js', g.context)
+    rendered = Assert(render_response('test.js', context))
 
     assert rendered.mimetype == 'application/javascript'
     assert rendered.data == 'alert("Rudolf");\n'
 
 
-@test
-def renders_css():
+@rendering.test
+def renders_css(context):
     """A css extension results in no doctype and a text/css mimetype"""
 
-    rendered = render_response('test.css', g.context)
+    rendered = Assert(render_response('test.css', context))
 
     assert rendered.mimetype == 'text/css'
     assert rendered.data == 'h1:after { content: " Rudolf"; }\n'
 
 
-@test
-def renders_svg():
+@rendering.test
+def renders_svg(context):
     """An svg extension results in an SVG doctype and mimetype"""
 
-    rendered = render_response('test.svg', g.context)
+    rendered = Assert(render_response('test.svg', context))
     expected_data = ('<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" '
                      '"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n'
                      '<svg viewBox="0 0 1000 300">\n'

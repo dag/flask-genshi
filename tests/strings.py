@@ -1,26 +1,32 @@
+from __future__ import with_statement
 
-from __future__ import absolute_import
-
-from nose.tools import raises
+from attest import Tests, Assert
 from flaskext.genshi import render_response
-from flask import g
 
-from .utils import test
+from tests.utils import appcontext
 
 
-@test
-def renders_strings():
+strings = Tests()
+
+@strings.context
+def context():
+    with appcontext():
+        yield dict(name='Rudolf')
+
+
+@strings.test
+def renders_strings(context):
     """Strings can be rendered as templates directly"""
 
-    rendered = render_response(string='The name is $name',
-                               context=g.context, method='text')
+    rendered = Assert(render_response(string='The name is $name',
+                                      context=context, method='text'))
 
     assert rendered.data == 'The name is Rudolf'
 
 
-@test
-@raises(RuntimeError)
-def fails_without_template_or_string():
+@strings.test
+def fails_without_template_or_string(context):
     """A template or string must be provided to render"""
 
-    render_response(context=g.context, method='text')
+    with Assert.raises(RuntimeError):
+        render_response(context=context, method='text')

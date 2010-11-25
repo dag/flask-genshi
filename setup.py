@@ -20,8 +20,9 @@ setup(
     namespace_packages=['flaskext'],
     zip_safe=False,
     platforms='any',
-    test_suite='nose.collector',
-    tests_require=['nose', 'flatland', 'blinker'],
+    test_loader='attest:Loader',
+    test_suite='tests.all',
+    tests_require=['attest', 'flatland', 'blinker'],
     install_requires=[
         'Flask',
         'Genshi>=0.5'

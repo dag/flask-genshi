@@ -1,25 +1,34 @@
+from __future__ import with_statement
 
-from __future__ import absolute_import
-
+from attest import Tests, Assert
 from flaskext.genshi import render_template
-from flask import g
 
-from .utils import test
+from tests.utils import appcontext
 
 
-@test
-def loads_module_templates():
+modules = Tests()
+
+@modules.context
+def context():
+    with appcontext():
+        yield dict(name='Rudolf')
+
+
+@modules.test
+def loads_module_templates(context):
     """Templates can be loaded from module packages"""
 
-    rendered = render_template('package_mod/module-template.txt', g.context)
+    rendered = Assert(render_template('package_mod/module-template.txt',
+                                      context))
 
     assert rendered == 'Hello modular Rudolf\n'
 
 
-@test
-def overrides_module_templates():
+@modules.test
+def overrides_module_templates(context):
     """Module templates can be overridden with application templates"""
 
-    rendered = render_template('package_mod/nonmodule-template.txt', g.context)
+    rendered = Assert(render_template('package_mod/nonmodule-template.txt',
+                                      context))
 
     assert rendered == 'Hello nonmodular Rudolf\n'
