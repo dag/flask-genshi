@@ -1,13 +1,13 @@
 from __future__ import with_statement
 
-from attest import Tests, Assert
+from attest import Assert
 from genshi.filters import Transformer
 from flask import current_app
 from flaskext.genshi import render_template
 from flatland.out.genshi import flatland_filter
 from flatland import Form, String
 
-from tests.utils import appcontext
+from tests.utils import flask_tests
 
 
 class TestForm(Form):
@@ -15,12 +15,7 @@ class TestForm(Form):
     username = String
 
 
-filters = Tests()
-
-@filters.context
-def context():
-    with appcontext():
-        yield
+filters = flask_tests()
 
 
 @filters.test

@@ -1,19 +1,14 @@
 from __future__ import with_statement
 
-from attest import Tests, Assert
+from attest import Assert
 from flask import current_app
 from genshi.filters import Translator
 from flaskext.genshi import render_template
 
-from tests.utils import appcontext
+from tests.utils import flask_tests
 
 
-i18n = Tests()
-
-@i18n.context
-def context():
-    with appcontext():
-        yield
+i18n = flask_tests()
 
 
 @i18n.test

@@ -2,11 +2,11 @@ from __future__ import with_statement
 
 from contextlib import contextmanager
 
-from attest import Tests, Assert
+from attest import Assert
 from flaskext.genshi import template_generated, render_template
 from flask import current_app
 
-from tests.utils import appcontext
+from tests.utils import flask_tests
 
 
 @contextmanager
@@ -21,12 +21,7 @@ def captured_templates(app):
         template_generated.disconnect(record, app)
 
 
-signals = Tests()
-
-@signals.context
-def context():
-    with appcontext():
-        yield dict(name='Rudolf')
+signals = flask_tests()
 
 
 @signals.test

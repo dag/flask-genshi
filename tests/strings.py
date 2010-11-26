@@ -1,17 +1,12 @@
 from __future__ import with_statement
 
-from attest import Tests, Assert
+from attest import Assert
 from flaskext.genshi import render_response
 
-from tests.utils import appcontext
+from tests.utils import flask_tests
 
 
-strings = Tests()
-
-@strings.context
-def context():
-    with appcontext():
-        yield dict(name='Rudolf')
+strings = flask_tests()
 
 
 @strings.test

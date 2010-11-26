@@ -1,18 +1,12 @@
 from __future__ import with_statement
 
-from attest import Tests
 from flask import current_app
 from flaskext.genshi import render_response
 
-from tests.utils import appcontext
+from tests.utils import flask_tests
 
 
-contexts = Tests()
-
-@contexts.context
-def context():
-    with appcontext():
-        yield
+contexts = flask_tests()
 
 
 @contexts.test

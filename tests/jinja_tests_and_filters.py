@@ -1,17 +1,12 @@
 from __future__ import with_statement
 
-from attest import Tests, Assert
+from attest import Assert
 from flaskext.genshi import render_template
 
-from tests.utils import appcontext
+from tests.utils import flask_tests
 
 
-jinja = Tests()
-
-@jinja.context
-def context():
-    with appcontext():
-        yield
+jinja = flask_tests()
 
 
 @jinja.test
