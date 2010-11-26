@@ -2,6 +2,7 @@
 *.swp
 docs/_build/
 Flask_Genshi.egg-info/
+*.egg/
 build/
 dist/
 .pida-metadata/
