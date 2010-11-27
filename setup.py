@@ -9,7 +9,7 @@ with open('README.rst') as file:
 
 setup(
     name='Flask-Genshi',
-    version='0.5',
+    version='0.5.1',
     url='http://packages.python.org/Flask-Genshi',
     license='BSD',
     author='Dag Odenhall',
