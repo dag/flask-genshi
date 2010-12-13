@@ -246,14 +246,19 @@ Using with Flask-Babel
 
 You can use Flask-Genshi with `Flask-Babel`_ for internationalization.
 First, set up the :class:`~genshi.filters.Translator` filter with
-the callback interface via :meth:`~Genshi.template_parsed`::
+the callback interface via :meth:`~Genshi.template_parsed`. The filter
+wants a message catalogue and to get the right one for every request you
+can use Werkzeug's :class:`~werkzeug.LocalProxy`::
 
+    from werkzeug import LocalProxy
     from genshi.filters import Translator
-    from flaskext.babel import gettext
+    from flaskext.babel import get_translations
+
+    current_translations = LocalProxy(get_translations)
 
     @genshi.template_parsed
     def callback(template):
-        Translator(gettext).setup(template)
+        Translator(current_translations).setup(template)
 
 You'll want a ``babel.cfg`` similar to this one:
 
@@ -265,7 +270,21 @@ You'll want a ``babel.cfg`` similar to this one:
     template_class = genshi.template.NewTextTemplate
 
 Consult the Genshi documentation on `Internationalization and Localization`_
-for details on extracting translation strings from Genshi templates.
+for details on extracting translation strings from Genshi templates. Beware
+of a documentation bug though, the XML namespace should *not* end in a
+slash. Here's a working template example:
+
+.. code-block:: html+genshi
+
+    <html xmlns:i18n="http://genshi.edgewall.org/i18n">
+      <head>
+        <title i18n:msg="subtitle">Legendary Site - $title</title>
+      </head>
+    </html>
+
+The above will result in the string ``Legendary Site - %(subtitle)s`` in
+your message catalogue.
+
 
 .. versionadded:: 0.5
 
