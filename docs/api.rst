@@ -4,8 +4,24 @@ API
 .. module:: flaskext.genshi
 
 
+Rendering functions
+-------------------
+
+.. autofunction:: render_response
+
+.. autofunction:: render_template
+
+
+
+Extension Object
+----------------
+
 .. autoclass:: Genshi
     :members:
+
+
+Signals
+-------
 
 .. data:: template_generated
 
@@ -14,8 +30,8 @@ API
 
    .. versionadded:: 0.5
 
+
+Lesser utilities
+----------------
+
 .. autofunction:: generate_template
-
-.. autofunction:: render_template
-
-.. autofunction:: render_response
