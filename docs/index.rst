@@ -153,7 +153,18 @@ Method      Extension Template Language Output
 Using Jinja filters and tests
 -----------------------------
 
-Flask-Genshi supports tests and filters from Jinja:
+Flask-Genshi supports tests and filters from Jinja. Filters are exposed in
+the top-level namespace as-is, tests with ``is`` prepended to their name.
+Both are also accessible unchanged under the ``filters`` and ``tests``
+namespaces.
+
+.. code-block:: html+genshi
+
+    <p class="${'even' if iseven(1) else 'odd'}">
+      ${truncate('Hello World', 10)}
+    </p>
+
+Same thing:
 
 .. code-block:: html+genshi
 
@@ -168,6 +179,8 @@ Result:
     <p class="odd">
       Hello ...
     </p>
+
+.. versionchanged:: 0.6 Top-level access.
 
 
 Module templates

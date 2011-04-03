@@ -224,6 +224,10 @@ def generate_template(template=None, context=None,
         context.setdefault(key, value)
     context.setdefault('filters', current_app.jinja_env.filters)
     context.setdefault('tests', current_app.jinja_env.tests)
+    for key, value in current_app.jinja_env.filters.iteritems():
+        context.setdefault(key, value)
+    for key, value in current_app.jinja_env.tests.iteritems():
+        context.setdefault('is%s' % key, value)
     current_app.update_template_context(context)
 
     if template is not None:
