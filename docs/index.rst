@@ -21,6 +21,7 @@ Not yet:
 * Flask-Theme probably does not work with Genshi templates.
 * `Chameleon`_, not sure if it should be a separate extension or not.
 
+
 Why Genshi?
 -----------
 
@@ -45,7 +46,7 @@ engine. Why would Genshi possibly be interesting?
 
   .. code-block:: jinja
 
-      {% block title %}Page Title{% endblock %}
+      <title>{% block title %}Page Title{% endblock %}</title>
       {% if show_paragraph %}
         <p>{% trans %}Example paragraph with {{ variable }} content{% endtrans %}
       {% endif %}
@@ -67,6 +68,7 @@ engine. Why would Genshi possibly be interesting?
   output, and you can swap the output format on-the-fly. You're also writing actual
   XML so no need for those pesky spaces in self-closing tags: ``<hr/>`` will render
   to HTML as ``<hr>`` and to XHTML as ``<hr />``.
+
 
 Installation
 ------------
