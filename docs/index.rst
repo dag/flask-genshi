@@ -44,7 +44,7 @@ engine. Why would Genshi possibly be interesting?
 
   Take this Jinja template:
 
-  .. code-block:: jinja
+  .. code-block:: html+jinja
 
       <title>{% block title %}Page Title{% endblock %}</title>
       {% if show_paragraph %}
