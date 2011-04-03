@@ -92,14 +92,14 @@ exclude_patterns = ['_build']
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
-html_theme = 'flask_small'
+html_theme = 'flask'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
     'index_logo': 'flask-genshi.png',
-    'github_fork': 'dag/flask-genshi'
+    #'github_fork': 'dag/flask-genshi'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
