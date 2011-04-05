@@ -7,13 +7,13 @@ Use with Other Extensions and Packages
 Form Processing with flatland
 -----------------------------
 
-First, add the flatland filter::
+First, set up flatland with the callback interface::
 
-    from flatland.out.genshi import flatland_filter
+    from flatland.out.genshi import setup
 
-    @genshi.filter('html')
-    def inject_flatland(template, context):
-        return flatland_filter(template, context)
+    @genshi.template_parsed
+    def callback(template):
+        setup(template)
 
 Don't forget the form namespace:
 
