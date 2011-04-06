@@ -1,0 +1,24 @@
+<html py:strip="" xmlns:py="http://genshi.edgewall.org/">
+  <head>
+    <title>Flaskr</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="${url_for('static', filename='style.css')}"
+    />
+  </head>
+
+  <body py:match="body">
+    <div class="page">
+      <h1>Flaskr</h1>
+      <div py:choose="session.get('logged_in')" class="metanav">
+        <a py:when="None" href="${url_for('login')}">log in</a>
+        <a py:when="True" href="${url_for('logout')}">log out</a>
+      </div>
+      <div py:for="message in get_flashed_messages()" class="flash">
+        ${message}
+      </div>
+      ${select('*|text()')}
+    </div>
+  </body>
+</html>

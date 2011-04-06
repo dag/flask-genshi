@@ -1,0 +1,31 @@
+<html
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+>
+  <xi:include href="layout.html"/>
+  <body>
+    <form
+      py:if="session.get('logged_in')"
+      action="${url_for('add_entry')}"
+      method="post"
+      class="add-entry"
+    >
+      <dl>
+        <dt>Title:</dt>
+        <dd><input type="text" size="30" name="title"/></dd>
+        <dt>Text:</dt>
+        <dd><textarea name="text" rows="5" cols="40"/></dd>
+        <dd><input type="submit" value="Share"/></dd>
+      </dl>
+    </form>
+    <ul class="entries">
+      <li py:for="entry in entries">
+        <h2>${entry.title}</h2>
+        ${Markup(entry.text)}
+      </li>
+      <li py:if="not entries">
+        <em>Unbelievable.  No entries here so far</em>
+      </li>
+    </ul>
+  </body>
+</html>
