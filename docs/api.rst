@@ -7,6 +7,8 @@ API
 Rendering functions
 -------------------
 
+.. autofunction:: render
+
 .. autofunction:: render_response
 
 .. autofunction:: render_template

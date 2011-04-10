@@ -1,6 +1,6 @@
 from __future__ import with_statement
 from attest import Assert
-from flaskext.genshi import render_response
+from flaskext.genshi import render_response, render
 from tests.utils import flask_tests
 
 
@@ -35,7 +35,10 @@ def renders_xml(context):
     """An xml extension results in no doctype and a application/xml mimetype"""
 
     rendered = Assert(render_response('test.xml', context))
+    assert rendered.mimetype == 'application/xml'
+    assert rendered.data == '<name>Rudolf</name>'
 
+    rendered = Assert(render('test.xml', **context))
     assert rendered.mimetype == 'application/xml'
     assert rendered.data == '<name>Rudolf</name>'
 

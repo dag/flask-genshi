@@ -281,3 +281,14 @@ def render_response(template=None, context=None,
     mimetype = genshi.methods[method].get('mimetype', 'text/html')
     template = render_template(template, context, method, string, filter)
     return current_app.response_class(template, mimetype=mimetype)
+
+
+def render(template, **context):
+    """Render a template to a response object, passing the context as
+    keyword arguments. Shorthand for
+    ``render_response(template, dict(**context))``.
+
+    .. versionadded:: 0.6
+
+    """
+    return render_response(template, context)
