@@ -6,3 +6,4 @@ Flask_Genshi.egg-info/
 build/
 dist/
 .pida-metadata/
+.tox
