@@ -20,6 +20,7 @@ Not yet:
 
 * Flask-Theme probably does not work with Genshi templates.
 * `Chameleon`_, not sure if it should be a separate extension or not.
+* Google App Engine -- Genshi itself doesn't run on it.
 
 
 Why Genshi?
