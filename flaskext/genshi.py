@@ -97,19 +97,19 @@ class Genshi(object):
         in, including at least the items in *base*."""
         env = current_app.jinja_env
         context = Context()
-        context.push({key: value
+        context.push(dict((key, value)
             for key, value in env.globals.iteritems()
             if key not in __builtins__
             and not _is_jinja_specific(value)
-        })
-        context.push({key: Pipe(value)
+        ))
+        context.push(dict((key, Pipe(value))
             for key, value in env.filters.iteritems()
             if not _is_jinja_specific(value)
-        })
-        context.push({'is' + key: value
+        ))
+        context.push(dict(('is' + key, value)
             for key, value in env.tests.iteritems()
             if not _is_jinja_specific(value)
-        })
+        ))
         context.push(base)
         return context
 
