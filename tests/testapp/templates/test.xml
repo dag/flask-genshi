@@ -1,0 +1,7 @@
+<html>
+  <body>
+    <p>Hello, ${name}!</p>
+    <p>Welcome to ${request.host}.</p>
+    <hr/>
+  </body>
+</html>

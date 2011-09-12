@@ -1,0 +1,20 @@
+<html
+    xmlns:py="http://genshi.edgewall.org/"
+    xmlns:i18n="http://genshi.edgewall.org/i18n"
+  >
+
+  <body>
+
+    <p i18n:msg="name"
+      >Hello, ${name}!</p>
+
+    <p py:if="isodd(1)"
+      >Welcome to ${request.host}.</p>
+
+    <p>${
+      'Lorem ipsum dolor sit amet.' | truncate(10)
+    }</p>
+
+    <hr/>
+  </body>
+</html>

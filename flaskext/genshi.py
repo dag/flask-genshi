@@ -1,294 +1,231 @@
-# -*- coding: utf-8 -*-
-"""
-    flaskext.genshi
-    ~~~~~~~~~~~~~~~
-
-    An extension to Flask for easy Genshi templating.
-
-    :copyright: (c) 2010 by Dag Odenhall <dag.odenhall@gmail.com>.
-    :license: BSD, see LICENSE for more details.
-"""
-
 from __future__ import absolute_import
 
-from collections import defaultdict
+import fnmatch
+import functools
+import mimetypes
 import os.path
-from warnings import warn
-from inspect import getargspec
 
-from genshi.template import (NewTextTemplate, MarkupTemplate,
-                             loader, TemplateLoader)
-from werkzeug import cached_property
 from flask import current_app
+from flask.signals import Namespace
+from werkzeug.local import LocalProxy
+from werkzeug.utils import cached_property
 
-try:
-    from flask import signals_available
-except ImportError:
-    signals_available = False
-else:
-    from flask.signals import Namespace
-    signals = Namespace()
-    template_generated = signals.signal('template-generated')
+from genshi.output import (DocType, XMLSerializer, XHTMLSerializer,
+                           HTMLSerializer, TextSerializer, encode)
+from genshi.template import (TemplateLoader, Context, MarkupTemplate,
+                             NewTextTemplate as TextTemplate)
+
+
+_signals = Namespace()
+_current = LocalProxy(lambda: current_app.extensions['genshi'])
+
+
+template_parsed = _signals.signal('template-parsed')
+template_loaded = _signals.signal('template-loaded')
+stream_generated = _signals.signal('stream-generated')
+
+
+def render(template_name, **context):
+    """Render a template to a response object."""
+    return _current.genshi[template_name](**context)
+
+
+def render_template(template_name, **context):
+    """Render a template to a unicode string."""
+    return _current.genshi[template_name].render(**context)
 
 
 class Genshi(object):
-    """Initialize extension.
-
-    ::
-
-        app = Flask(__name__)
-        genshi = Genshi(app)
-
-    .. versionchanged:: 0.4
-        You can now initialize your application later with :meth:`init_app`.
-
-    .. deprecated:: 0.4
-        ``app.genshi_instance`` in favor of ``app.extensions['genshi']``.
-
-    """
+    """Extension object.  Holds configuration for the Flask-Genshi
+    extension."""
 
     def __init__(self, app=None):
-
         if app is not None:
             self.init_app(app)
 
-        #: A callable for Genshi's callback interface, called when a template
-        #: is loaded, with the template as the only argument.
-        #:
-        #: :meth:`template_parsed` is a decorator for setting this.
-        #:
-        #: .. versionadded:: 0.5
-        self.callback = None
-
-        #: What method is used for an extension.
-        self.extensions = {
-            'html': 'html',
-            'xml': 'xml',
-            'txt': 'text',
-            'js': 'js',
-            'css': 'css',
-            'svg': 'svg'
-        }
-
-        #: Render methods.
-        #:
-        #: .. versionchanged:: 0.3 Support for Javascript and CSS.
-        #: .. versionchanged:: 0.4 Support for SVG.
-        self.methods = {
-            'html': {
-                'serializer': 'html',
-                'doctype': 'html',
-            },
-            'html5': {
-                'serializer': 'html',
-                'doctype': 'html5',
-            },
-            'xhtml': {
-                'serializer': 'xhtml',
-                'doctype': 'xhtml',
-                'mimetype': 'application/xhtml+xml'
-            },
-            'xml': {
-                'serializer': 'xml',
-                'mimetype': 'application/xml'
-            },
-            'text': {
-                'serializer': 'text',
-                'mimetype': 'text/plain',
-                'class': NewTextTemplate
-            },
-            'js': {
-                'serializer': 'text',
-                'mimetype': 'application/javascript',
-                'class': NewTextTemplate
-            },
-            'css': {
-                'serializer': 'text',
-                'mimetype': 'text/css',
-                'class': NewTextTemplate
-            },
-            'svg': {
-                'serializer': 'xml',
-                'doctype': 'svg',
-                'mimetype': 'image/svg+xml'
-            }
-        }
-
-        #: Filter functions to be applied to templates.
-        #:
-        #: .. versionadded:: 0.3
-        self.filters = defaultdict(list)
-
     def init_app(self, app):
-        """Initialize a :class:`~flask.Flask` application
-        for use with this extension. Useful for the factory pattern but
-        not needed if you passed your application to the :class:`Genshi`
-        constructor.
+        """Configure a Flask application for using this extension."""
+        app.extensions['genshi'] = _GenshiState(self, app)
 
-        ::
-
-            genshi = Genshi()
-
-            app = Flask(__name__)
-            genshi.init_app(app)
-
-        .. versionadded:: 0.4
-
-        """
-        if not hasattr(app, 'extensions'):
-            app.extensions = {}
-
-        app.extensions['genshi'] = self
-        app.genshi_instance = self
-        self.app = app
-
-    def template_parsed(self, callback):
-        """Set up a calback to be called with a template when it is first
-        loaded and parsed. This is the correct way to set up the
-        :class:`~genshi.filters.Translator` filter.
-
-        .. versionadded:: 0.5
-
-        """
-        self.callback = callback
-        return callback
-
-    @cached_property
-    def template_loader(self):
-        """A :class:`genshi.template.TemplateLoader` that loads templates
-        from the same places as Flask.
-
-        """
-        path = loader.directory(os.path.join(self.app.root_path, 'templates'))
-        module_paths = {}
-        modules = getattr(self.app, 'modules', {})
-        for name, module in modules.iteritems():
-            module_path = os.path.join(module.root_path, 'templates')
-            if os.path.isdir(module_path):
-                module_paths[name] = loader.directory(module_path)
-        return TemplateLoader([path, loader.prefixed(**module_paths)],
-                              auto_reload=self.app.debug,
-                              callback=self.callback)
-
-    def filter(self, *methods):
-        """Decorator that adds a function to apply filters
-        to templates by rendering method.
-
-        .. versionadded:: 0.3
-
-        .. versionchanged:: 0.5
-            Filters can now optionally take a second argument for the context.
-
-        """
-        def decorator(function):
-            for method in methods:
-                self.filters[method].append(function)
-            return function
+    def filter(self, *mimetypes):
+        """Register a filter function on the content types configured for
+        each of the *mimetypes*."""
+        def decorator(func):
+            for type in mimetypes:
+                content_type = self.content_types[type]
+                content_type.add_filter(func)
+            return func
         return decorator
 
-    def _method_for(self, template, method=None):
-        """Selects a method from :attr:`Genshi.methods`
-        based on the file extension of ``template``
-        and :attr:`Genshi.extensions`, or based on ``method``.
+    def __getitem__(self, name):
+        return Template(name)
 
-        """
-        if method is None:
-            ext = os.path.splitext(template)[1][1:]
-            return self.extensions[ext]
-        return method
+    @cached_property
+    def mime_db(self):
+        """A `~mimetypes.MimeTypes` instance used to look up the
+        `ContentType` configured for a template."""
+        return mimetypes.MimeTypes()
 
+    @cached_property
+    def content_types(self):
+        """Maps |MIME| types to `ContentType` instances."""
+        return {
+            '*/*':
+                ContentType(),
+            'text/html':
+                ContentType(HTMLSerializer(DocType.HTML5)),
+            'application/xhtml+xml':
+                ContentType(XMLSerializer(DocType.XHTML11)),
+            'text/*':
+                ContentType(TextSerializer(), TextTemplate),
+        }
 
-def select_method(template, method=None):
-    """Same as :meth:`Genshi._method_for`.
+    def get_content_type(self, filename):
+        """Select the `ContentType` configured for the mimetype of
+        *filename*."""
+        mimetype = self.mime_db.guess_type(filename)[0]
+        try:
+            return self.content_types[mimetype]
+        except KeyError:
+            for key, value in self.content_types.iteritems():
+                if key != '*/*' and fnmatch.fnmatch(mimetype, key):
+                    return value
+        return self.content_types['*/*']
 
-    .. deprecated:: 0.4
+    def create_context(self, base):
+        """Create a `~genshi.template.base.Context` for rendering templates
+        in, including at least the items in *base*."""
+        env = current_app.jinja_env
+        context = Context()
+        context.push({key: value
+            for key, value in env.globals.iteritems()
+            if key not in __builtins__
+            and not _is_jinja_specific(value)
+        })
+        context.push({key: Pipe(value)
+            for key, value in env.filters.iteritems()
+            if not _is_jinja_specific(value)
+        })
+        context.push({'is' + key: value
+            for key, value in env.tests.iteritems()
+            if not _is_jinja_specific(value)
+        })
+        context.push(base)
+        return context
 
-    """
-    warn('select_method to be dropped in future releases',
-         DeprecationWarning, stacklevel=2)
-    return current_app.extensions['genshi']._method_for(template, method)
+    def create_loader(self, app):
+        """Create a template loader for Genshi based on the template
+        folders configured for *app* and its blueprints."""
+        folders = [os.path.join(app.root_path, app.template_folder)]
+        for blueprint in app.blueprints.itervalues():
+            if blueprint.template_folder is not None:
+                folders.append(os.path.join(blueprint.root_path,
+                                            blueprint.template_folder))
+        return TemplateLoader(folders, auto_reload=app.debug,
+                              callback=self.loader_callback)
 
-
-def generate_template(template=None, context=None,
-                      method=None, string=None, filter=None):
-    """Creates a Genshi template stream that you can
-    run filters and transformations on.
-
-    """
-    genshi = current_app.extensions['genshi']
-    method = genshi._method_for(template, method)
-    class_ = genshi.methods[method].get('class', MarkupTemplate)
-
-    context = context or {}
-    for key, value in current_app.jinja_env.globals.iteritems():
-        context.setdefault(key, value)
-    context.setdefault('filters', current_app.jinja_env.filters)
-    context.setdefault('tests', current_app.jinja_env.tests)
-    for key, value in current_app.jinja_env.filters.iteritems():
-        context.setdefault(key, value)
-    for key, value in current_app.jinja_env.tests.iteritems():
-        context.setdefault('is%s' % key, value)
-    current_app.update_template_context(context)
-
-    if template is not None:
-        template = genshi.template_loader.load(template, cls=class_)
-    elif string is not None:
-        template = class_(string)
-    else:
-        raise RuntimeError('Need a template or string')
-
-    stream = template.generate(**context)
-
-    if signals_available:
-        template_generated.send(current_app._get_current_object(),
-                                template=template, context=context)
-
-    for func in genshi.filters[method]:
-        if len(getargspec(func)[0]) == 2:  # Filter takes context?
-            stream = func(stream, context)
-        else:
-            stream = func(stream)
-
-    if filter:
-        if len(getargspec(filter)[0]) == 2:  # Filter takes context?
-            stream = filter(stream, context)
-        else:
-            stream = filter(stream)
-
-    return stream
-
-
-def render_template(template=None, context=None,
-                    method=None, string=None, filter=None):
-    """Renders a template to a string."""
-    genshi = current_app.extensions['genshi']
-    method = genshi._method_for(template, method)
-    template = generate_template(template, context, method, string, filter)
-    render_args = dict(method=genshi.methods[method]['serializer'])
-    if 'doctype' in genshi.methods[method]:
-        render_args['doctype'] = genshi.methods[method]['doctype']
-    return template.render(**render_args)
+    def loader_callback(self, template):
+        """Called by template loaders when a template is parsed, but not
+        when it is returned from the cache."""
+        template_parsed.send(self, template=template)
 
 
-def render_response(template=None, context=None,
-                    method=None, string=None, filter=None):
-    """Renders a template and wraps it in a :attr:`~flask.Flask.response_class`
-    with mimetype set according to the rendering method.
+class ContentType(object):
+    """Configuration for how Genshi should parse and render a template."""
 
-    """
-    genshi = current_app.extensions['genshi']
-    method = genshi._method_for(template, method)
-    mimetype = genshi.methods[method].get('mimetype', 'text/html')
-    template = render_template(template, context, method, string, filter)
-    return current_app.response_class(template, mimetype=mimetype)
+    def __init__(self, serializer=XMLSerializer(),
+                 template_class=MarkupTemplate):
+        self.serializer = serializer
+        self.template_class = template_class
+        self.filters = []
+
+    def add_filter(self, func):
+        """Register *func* as a stream filter that will be applied when
+        rendering templates of this content type."""
+        self.filters.append(func)
+
+    def load(self, name, loader):
+        """Load the template named *name* from the *loader*."""
+        template = loader.load(name, cls=self.template_class)
+        template_loaded.send(self, template=template)
+        return template
+
+    def generate(self, template, context, filters):
+        """Generate a stream from the *template* rendered in the *context*
+        with the additional *filters* applied."""
+        filters = filters + self.filters
+        stream = template.generate(context)
+        stream = reduce(lambda s, f: f(s), [stream] + filters)
+        stream_generated.send(self, stream=stream,
+                              context=context, filters=filters)
+        return stream
+
+    def render(self, stream):
+        """Render a *stream* to a unicode string."""
+        return encode(self.serializer(stream), encoding=None)
 
 
-def render(template, **context):
-    """Render a template to a response object, passing the context as
-    keyword arguments. Shorthand for
-    ``render_response(template, dict(**context))``.
+class Template(object):
 
-    .. versionadded:: 0.6
+    def __init__(self, name, filters=None):
+        self.name = name
+        self.filters = [] if filters is None else filters
 
-    """
-    return render_response(template, context)
+    def __or__(self, other):
+        return type(self)(self.name, self.filters + [other])
+
+    @property
+    def content_type(self):
+        return _current.genshi.get_content_type(self.name)
+
+    @property
+    def template(self):
+        return self.content_type.load(self.name, _current.loader)
+
+    def render(self, **context):
+        current_app.update_template_context(context)
+        newctx = _current.genshi.create_context(context)
+        content_type = self.content_type
+        stream = content_type.generate(self.template, newctx, self.filters)
+        return content_type.render(stream)
+
+    def __call__(self, **context):
+        rendering = self.render(**context)
+        mimetype = _current.genshi.mime_db.guess_type(self.name)[0]
+        return current_app.response_class(rendering, mimetype=mimetype)
+
+
+class Pipe(object):
+
+    def __init__(self, func, *args, **kwargs):
+        functools.update_wrapper(self, func)
+        self.func = func
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self, *args, **kwargs):
+        return type(self)(self.func, *args, **kwargs)
+
+    def __ror__(self, other):
+        return self.func(other, *self.args, **self.kwargs)
+
+
+class _GenshiState(object):
+
+    def __init__(self, genshi, app):
+        self.genshi = genshi
+        self.app = app
+
+    @cached_property
+    def loader(self):
+        return self.genshi.create_loader(self.app)
+
+
+def _is_jinja_specific(filter):
+    return any(getattr(filter, attr, False)
+               for attr in ['contextfilter',
+                            'evalcontextfilter',
+                            'environmentfilter',
+                            'contextfunction',
+                            'evalcontextfunction',
+                            'environmentfunction'])
