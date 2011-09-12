@@ -40,7 +40,7 @@ Primary User API
 
   .. automethod:: init_app
 
-  .. decoratormethod:: @filter(\*mimetypes)
+  .. decoratormethod:: filter(\*mimetypes)
 
     Register a filter function on the content types configured for
     each of the *mimetypes*.
