@@ -9,7 +9,7 @@ Flask Integration
   features.
 * Response objects use the class configured for the Flask application, when
   rendering responses with a |MIME| type.  This can be used to set an
-  output encoding other than the UTF-8 default.
+  output encoding other than the |UTF8| default.
 * Various signals are emitted in a similar fashion to the
   `~flask.template_rendered` signal in Flask.
 

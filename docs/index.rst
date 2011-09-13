@@ -15,6 +15,7 @@ Flask-Genshi
 .. |HTML| replace:: :abbr:`HTML (Hypertext Markup Language)`
 .. |HTTP| replace:: :abbr:`HTTP (Hypertext Transfer Protocol)`
 .. |MIME| replace:: :abbr:`MIME (Multipurpose Internet Mail Extensions)`
+.. |UTF8| replace:: :abbr:`UTF-8 (Universal Character Set Transformation Format — 8-bit)`
 .. |XHTML| replace:: :abbr:`XHTML (Extensible Hypertext Markup Language)`
 .. |XML| replace:: :abbr:`XML (Extensible Markup Language)`
 
