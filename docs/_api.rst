@@ -71,12 +71,24 @@ Additional Utilities
 
 .. autoclass:: ContentType(serializer=XMLSerializer(), template_class=MarkupTemplate)
   :members:
-  :undoc-members:
 
 
 .. autoclass:: Template
-  :members:
-  :undoc-members:
+
+  The bitwise *or* operator can be used to create new instances with
+  additional filters.  These do the same::
+
+    Template('index.html') | Transformer('//title').replace('Fabulous Ltd.')
+    Template('index.html', [Transformer('//title').replace('Fabulous Ltd.')])
+
+  :param name: Filename of the template.
+  :param filters: List of functions to filter the stream with.
+
+  .. automethod:: render
+
+  .. automethod:: render_to_response
+
+    The call interface of this class is an alias of this method.
 
 
 .. autoclass:: Pipe

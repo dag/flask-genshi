@@ -166,6 +166,9 @@ class ContentType(object):
 
 
 class Template(object):
+    """Represents a Genshi template that can be loaded and rendered using
+    the configured `ContentType` of the current application, and possibly
+    additional filters."""
 
     def __init__(self, name, filters=None):
         self.name = name
@@ -183,16 +186,20 @@ class Template(object):
         return self.content_type.load(self.name, _current.loader)
 
     def render(self, **context):
+        """Render to a unicode string."""
         current_app.update_template_context(context)
         newctx = _current.genshi.create_context(context)
         content_type = self.content_type
         stream = content_type.generate(self.template, newctx, self.filters)
         return content_type.render(stream)
 
-    def __call__(self, **context):
+    def render_to_response(self, **context):
+        """Render to a response object."""
         rendering = self.render(**context)
         mimetype = _current.genshi.mime_db.guess_type(self.name)[0]
         return current_app.response_class(rendering, mimetype=mimetype)
+
+    __call__ = render_to_response
 
 
 class Pipe(object):
