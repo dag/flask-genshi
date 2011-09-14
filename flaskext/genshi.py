@@ -196,6 +196,7 @@ class Template(object):
 
 
 class Pipe(object):
+    """Wraps a function to be called via the bitwise *or* operator."""
 
     def __init__(self, func, *args, **kwargs):
         functools.update_wrapper(self, func)

@@ -80,8 +80,18 @@ Additional Utilities
 
 
 .. autoclass:: Pipe
-  :members:
-  :undoc-members:
+
+  Calling the pipe object as a callable yields a new `Pipe` with fixed
+  arguments.
+
+  This class can be used to mimic Jinja's "filters":
+
+  >>> length = Pipe(len)
+  >>> take = Pipe(lambda x, n: x[:n])
+  >>> [1, 2, 3] | length
+  3
+  >>> range(10) | take(5)
+  [0, 1, 2, 3, 4]
 
 
 Signals
