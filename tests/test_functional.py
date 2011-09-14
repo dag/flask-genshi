@@ -1,6 +1,6 @@
 # encoding=utf-8
 from unittest import TestCase
-from flaskext.genshi import render, render_template
+from flaskext.genshi import Template, render, render_template
 from genshi.filters import Transformer
 from testapp import app, genshi
 
@@ -25,6 +25,17 @@ XHTML_OUTPUT = u"""\
     <p>Hello, World!</p>
     <p>Welcome to localhost.</p>
     <hr/>
+  </body>
+</html>"""
+
+
+XHTML_AS_HTML_OUTPUT = u"""\
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>HELLO, WORLD!</p>
+    <p>WELCOME TO LOCALHOST.</p>
+    <hr>
   </body>
 </html>"""
 
@@ -101,3 +112,10 @@ class TestFiltering(FlaskTestCase):
     def test_single_template_filter(self):
         template = genshi['test.xml'] | Transformer('//p').remove()
         assert template.render(name='World') == FILTERED_XML_OUTPUT
+
+
+class TestOverrides(FlaskTestCase):
+
+    def test_override_content_type(self):
+        template = Template('test.xhtml', mimetype='text/html')
+        assert template.render(name='World') == XHTML_AS_HTML_OUTPUT

@@ -81,8 +81,15 @@ Additional Utilities
     Template('index.html') | Transformer('//title').replace('Fabulous Ltd.')
     Template('index.html', [Transformer('//title').replace('Fabulous Ltd.')])
 
+  The *mimetype* parameter can be used to override which `ContentType` to
+  render with.  For example to render an XHTML template as HTML 5::
+
+    return Template('index.xhtml', mimetype='text/html').render_to_response()
+
   :param name: Filename of the template.
   :param filters: List of functions to filter the stream with.
+  :param mimetype: Used to select the `ContentType` and set on rendered
+    response objects.  Guessed from the *name* parameter if set to None.
 
   .. automethod:: render
 

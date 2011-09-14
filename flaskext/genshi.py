@@ -80,10 +80,8 @@ class Genshi(object):
                 ContentType(TextSerializer(), TextTemplate),
         }
 
-    def get_content_type(self, filename):
-        """Select the `ContentType` configured for the mimetype of
-        *filename*."""
-        mimetype = self.mime_db.guess_type(filename)[0]
+    def get_content_type(self, mimetype):
+        """Select the `ContentType` configured for the *mimetype*."""
         try:
             return self.content_types[mimetype]
         except KeyError:
@@ -170,34 +168,40 @@ class Template(object):
     the configured `ContentType` of the current application, and possibly
     additional filters."""
 
-    def __init__(self, name, filters=None):
+    def __init__(self, name, filters=None, mimetype=None):
         self.name = name
         self.filters = [] if filters is None else filters
+        self.mimetype = mimetype
 
     def __or__(self, other):
-        return type(self)(self.name, self.filters + [other])
+        return type(self)(self.name, self.filters + [other], self.mimetype)
 
     @property
-    def content_type(self):
-        return _current.genshi.get_content_type(self.name)
+    def _mimetype(self):
+        if self.mimetype is not None:
+            return self.mimetype
+        return _current.genshi.mime_db.guess_type(self.name)[0]
 
     @property
-    def template(self):
-        return self.content_type.load(self.name, _current.loader)
+    def _content_type(self):
+        return _current.genshi.get_content_type(self._mimetype)
+
+    @property
+    def _template(self):
+        return self._content_type.load(self.name, _current.loader)
 
     def render(self, **context):
         """Render to a unicode string."""
         current_app.update_template_context(context)
         newctx = _current.genshi.create_context(context)
-        content_type = self.content_type
-        stream = content_type.generate(self.template, newctx, self.filters)
+        content_type = self._content_type
+        stream = content_type.generate(self._template, newctx, self.filters)
         return content_type.render(stream)
 
     def render_to_response(self, **context):
         """Render to a response object."""
         rendering = self.render(**context)
-        mimetype = _current.genshi.mime_db.guess_type(self.name)[0]
-        return current_app.response_class(rendering, mimetype=mimetype)
+        return current_app.response_class(rendering, mimetype=self._mimetype)
 
     __call__ = render_to_response
 
