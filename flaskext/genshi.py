@@ -18,6 +18,7 @@ from inspect import getargspec
 
 from genshi.template import (NewTextTemplate, MarkupTemplate,
                              loader, TemplateLoader)
+from jinja2.defaults import DEFAULT_NAMESPACE
 from werkzeug import cached_property
 from flask import current_app
 
@@ -221,6 +222,11 @@ def generate_template(template=None, context=None,
 
     context = context or {}
     for key, value in current_app.jinja_env.globals.iteritems():
+        # Jinja2 defines some default globals conflict with python
+        # builtins such as 'dict', and 'range'. Since Genshi allows
+        # regular python code to be run this will lead to confusion
+        if key in DEFAULT_NAMESPACE and hasattr(__builtins__, key):
+            continue
         context.setdefault(key, value)
     context.setdefault('filters', current_app.jinja_env.filters)
     context.setdefault('tests', current_app.jinja_env.tests)
