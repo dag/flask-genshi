@@ -1,4 +1,3 @@
-from __future__ import with_statement
 from attest import Tests
 
 from flask_genshi_testapp import create_app

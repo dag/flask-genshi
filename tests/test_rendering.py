@@ -1,4 +1,3 @@
-from __future__ import with_statement
 from attest import Assert
 from flaskext.genshi import render_response, render
 from tests.utils import flask_tests

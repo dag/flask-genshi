@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 from flask import current_app
 from flaskext.genshi import render_response
 

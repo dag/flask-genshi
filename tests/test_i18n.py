@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 from attest import Assert
 from flask import current_app
 from genshi.filters import Translator

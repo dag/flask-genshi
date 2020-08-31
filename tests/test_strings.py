@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 from attest import Assert
 from flaskext.genshi import render_response
 
