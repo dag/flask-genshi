@@ -1,66 +1,71 @@
-from attest import Assert
+import inspect
+
 from genshi.filters import Transformer
-from flask import current_app
 from flaskext.genshi import render_template
 from flatland.out.genshi import setup as flatland_setup
 from flatland import Form, String
 
-from tests.utils import flask_tests
 
-
-class TestForm(Form):
+class FlatlandForm(Form):
 
     username = String
 
 
-filters = flask_tests()
-
-
-@filters.test
-def applies_method_filters():
+def test_applies_method_filters(app):
     """Method filters are applied for generated and rendered templates"""
+    with app.test_request_context():
+        genshi = app.extensions["genshi"]
 
-    genshi = current_app.extensions['genshi']
-    @genshi.filter('html')
-    def prepend_title(template):
-        return template | Transformer('head/title').prepend('Flask-Genshi - ')
+        @genshi.filter("html")
+        def prepend_title(template):
+            return template | Transformer("head/title").prepend("Flask-Genshi - ")
 
-    rendered = Assert(render_template('filter.html'))
-    expected = ('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
-                '"http://www.w3.org/TR/html4/strict.dtd">\n'
-                '<html><head><title>Flask-Genshi - Hi!</title></head></html>')
+        rendered = render_template("filter.html")
+        expected = inspect.cleandoc(
+            """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+            <html><head><title>Flask-Genshi - Hi!</title></head></html>
+            """
+        )
 
-    assert rendered == expected
+        assert rendered == expected
 
 
-@filters.test
-def filters_per_render():
+def test_filters_per_render(app):
     """Filters can be applied per rendering"""
+    with app.test_request_context():
 
-    def prepend_title(template):
-        return template | Transformer('head/title').append(' - Flask-Genshi')
+        def prepend_title(template):
+            return template | Transformer("head/title").append(" - Flask-Genshi")
 
-    rendered = Assert(render_template('filter.html', filter=prepend_title))
-    expected = ('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
-                '"http://www.w3.org/TR/html4/strict.dtd">\n'
-                '<html><head><title>Hi! - Flask-Genshi</title></head></html>')
+        rendered = render_template("filter.html", filter=prepend_title)
+        expected = inspect.cleandoc(
+            """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+            <html><head><title>Hi! - Flask-Genshi</title></head></html>
+            """
+        )
 
-    assert rendered == expected
+        assert rendered == expected
 
 
-@filters.test
-def works_with_flatland():
+def test_works_with_flatland(app):
     """Filters can take the context and support flatland"""
+    with app.test_request_context():
 
-    genshi = current_app.extensions['genshi']
-    @genshi.template_parsed
-    def callback(template):
-        flatland_setup(template)
+        genshi = app.extensions["genshi"]
 
-    context = dict(form=TestForm({'username': 'dag'}))
-    rendered = Assert(render_template('flatland.html', context))
-    expected = ('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" '
-                '"http://www.w3.org/TR/html4/strict.dtd">\n'
-                '<input type="text" name="username" value="dag">')
+        @genshi.template_parsed
+        def callback(template):
+            flatland_setup(template)
 
-    assert rendered == expected
+        context = dict(form=FlatlandForm({"username": "dag"}))
+        rendered = render_template("flatland.html", context)
+        expected = inspect.cleandoc(
+            """
+            <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+            <input type="text" name="username" value="dag">
+            """
+        )
+
+        assert rendered == expected
