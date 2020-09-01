@@ -19,9 +19,6 @@ setup(
     namespace_packages=['flaskext'],
     zip_safe=False,
     platforms='any',
-    test_loader='attest:Loader',
-    test_suite='tests.all',
-    tests_require=['attest>=0.2', 'flatland', 'blinker'],
     install_requires=[
         'Flask',
         'Genshi>=0.5'

@@ -7,3 +7,4 @@ build/
 dist/
 .pida-metadata/
 .tox
+.pytest_cache/
