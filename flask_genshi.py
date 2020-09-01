@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     flask_genshi
-    ~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~
 
     An extension to Flask for easy Genshi templating.
 
@@ -29,6 +29,26 @@ else:
     from flask.signals import Namespace
     signals = Namespace()
     template_generated = signals.signal('template-generated')
+
+
+# there's more to Jinja context than just environment, but apparently
+# the only thing jinja filters currently care about is this (and also
+# whether autoescaping is on), hence these shims.
+#
+# NOTE: this does not take custom jinja filters into account, although I
+# don't expect Genshi-minded users of @jinja2.contextfilter any time
+# soon.
+# Taken from https://github.com/vthriller/flask-genshi
+class FakeJinjaContext:
+    def __init__(self, env):
+        self.environment = env
+
+
+class FakeJinjaEvalContext:
+    def __init__(self, env):
+        self.environment = env
+        # Flask set this one explicitly
+        self.autoescape = env.autoescape
 
 
 class Genshi(object):
@@ -159,7 +179,7 @@ class Genshi(object):
         from the same places as Flask.
 
         """
-        path = loader.directory(os.path.join(self.app.root_path, 'templates'))
+        path = loader.directory(os.path.join(self.app.root_path, self.app.template_folder))
         return TemplateLoader(path,
                               auto_reload=self.app.debug,
                               callback=self.callback)
@@ -213,14 +233,33 @@ def generate_template(template=None, context=None,
     method = genshi._method_for(template, method)
     class_ = genshi.methods[method].get('class', MarkupTemplate)
 
+    filters = current_app.jinja_env.filters.copy()
+    for name, f in filters.items():
+        if getattr(f, "environmentfilter", False):
+            filters[name] = (
+                lambda f: lambda *args, **kw: f(current_app.jinja_env, *args, **kw)
+            )(f)
+        elif getattr(f, "contextfilter", False):
+            filters[name] = (
+                lambda f: lambda *args, **kw: f(
+                    FakeJinjaContext(current_app.jinja_env), *args, **kw
+                )
+            )(f)
+        elif getattr(f, "evalcontextfilter", False):
+            filters[name] = (
+                lambda f: lambda *args, **kw: f(
+                    FakeJinjaEvalContext(current_app.jinja_env), *args, **kw
+                )
+            )(f)
+
     context = context or {}
-    for key, value in current_app.jinja_env.globals.iteritems():
+    for key, value in current_app.jinja_env.globals.items():
         context.setdefault(key, value)
-    context.setdefault('filters', current_app.jinja_env.filters)
+    context.setdefault('filters', filters)
     context.setdefault('tests', current_app.jinja_env.tests)
-    for key, value in current_app.jinja_env.filters.iteritems():
+    for key, value in filters.items():
         context.setdefault(key, value)
-    for key, value in current_app.jinja_env.tests.iteritems():
+    for key, value in current_app.jinja_env.tests.items():
         context.setdefault('is%s' % key, value)
     current_app.update_template_context(context)
 
