@@ -1,5 +1,6 @@
-import inspect
+from __future__ import unicode_literals
 
+from inspect import cleandoc
 from flask_genshi import render_response
 
 
@@ -13,12 +14,12 @@ def test_updates_context(app):
 
         rendered = render_response("context.html")
 
-        expected_data = inspect.cleandoc(
+        expected_data = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <pre>rudolf = The red-nosed reindeer</pre>
             """
-        )
+        ).encode("UTF-8")
 
         assert rendered.mimetype == "text/html"
         assert rendered.data == expected_data

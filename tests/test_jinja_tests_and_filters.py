@@ -1,4 +1,6 @@
-import inspect
+from __future__ import unicode_literals
+
+from inspect import cleandoc
 
 from flask_genshi import render_template
 
@@ -8,7 +10,7 @@ def test_provides_jinja_tests_and_filters(app):
     with app.test_request_context():
 
         rendered = render_template("jinja_tests_and_filters.html")
-        expected_data = inspect.cleandoc(
+        expected_data = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <p class="odd">

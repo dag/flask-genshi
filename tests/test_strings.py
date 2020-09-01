@@ -9,7 +9,7 @@ def test_renders_strings(app, context):
             string="The name is $name", context=context, method="text"
         )
 
-        assert rendered.data == "The name is Rudolf"
+        assert rendered.data == b"The name is Rudolf"
 
 
 def test_fails_without_template_or_string(app, context):

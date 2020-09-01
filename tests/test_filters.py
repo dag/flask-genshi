@@ -1,4 +1,6 @@
-import inspect
+from __future__ import unicode_literals
+
+from inspect import cleandoc
 
 from genshi.filters import Transformer
 from flask_genshi import render_template
@@ -21,7 +23,7 @@ def test_applies_method_filters(app):
             return template | Transformer("head/title").prepend("Flask-Genshi - ")
 
         rendered = render_template("filter.html")
-        expected = inspect.cleandoc(
+        expected = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <html><head><title>Flask-Genshi - Hi!</title></head></html>
@@ -39,7 +41,7 @@ def test_filters_per_render(app):
             return template | Transformer("head/title").append(" - Flask-Genshi")
 
         rendered = render_template("filter.html", filter=prepend_title)
-        expected = inspect.cleandoc(
+        expected = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <html><head><title>Hi! - Flask-Genshi</title></head></html>
@@ -61,7 +63,7 @@ def test_works_with_flatland(app):
 
         context = dict(form=FlatlandForm({"username": "dag"}))
         rendered = render_template("flatland.html", context)
-        expected = inspect.cleandoc(
+        expected = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <input type="text" name="username" value="dag">

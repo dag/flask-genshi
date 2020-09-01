@@ -14,7 +14,12 @@ from __future__ import absolute_import
 from collections import defaultdict
 import os.path
 from warnings import warn
-from inspect import getargspec
+try:
+    # PY3
+    from inspect import getfullargspec
+except ImportError:
+    # PY2
+    from inspect import getargspec as getfullargspec  # getargspec is deprecated >=3.0
 
 from genshi.template import (NewTextTemplate, MarkupTemplate,
                              loader, TemplateLoader)
@@ -277,13 +282,13 @@ def generate_template(template=None, context=None,
                                 template=template, context=context)
 
     for func in genshi.filters[method]:
-        if len(getargspec(func)[0]) == 2:  # Filter takes context?
+        if len(getfullargspec(func)[0]) == 2:  # Filter takes context?
             stream = func(stream, context)
         else:
             stream = func(stream)
 
     if filter:
-        if len(getargspec(filter)[0]) == 2:  # Filter takes context?
+        if len(getfullargspec(filter)[0]) == 2:  # Filter takes context?
             stream = filter(stream, context)
         else:
             stream = filter(stream)
