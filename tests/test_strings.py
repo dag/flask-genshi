@@ -1,5 +1,5 @@
 import pytest
-from flaskext.genshi import render_response
+from flask_genshi import render_response
 
 
 def test_renders_strings(app, context):

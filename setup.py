@@ -15,8 +15,7 @@ setup(
     author_email='dag.odenhall@gmail.com',
     description='An extension to Flask for easy Genshi templating.',
     long_description=readme,
-    packages=['flaskext'],
-    namespace_packages=['flaskext'],
+    py_modules=['flask_genshi'],
     zip_safe=False,
     platforms='any',
     install_requires=[

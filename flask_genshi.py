@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    flaskext.genshi
+    flask_genshi
     ~~~~~~~~~~~~~~~
 
     An extension to Flask for easy Genshi templating.

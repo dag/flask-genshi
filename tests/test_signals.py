@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from flaskext.genshi import template_generated, render_template
+from flask_genshi import template_generated, render_template
 
 
 @contextmanager

@@ -1,7 +1,7 @@
 import inspect
 
 from genshi.filters import Translator
-from flaskext.genshi import render_template
+from flask_genshi import render_template
 
 
 def test_does_translations(app):

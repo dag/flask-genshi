@@ -1,6 +1,6 @@
 import inspect
 
-from flaskext.genshi import render_response
+from flask_genshi import render_response
 
 
 def test_updates_context(app):

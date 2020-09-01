@@ -1,7 +1,7 @@
 import inspect
 
 from genshi.filters import Transformer
-from flaskext.genshi import render_template
+from flask_genshi import render_template
 from flatland.out.genshi import setup as flatland_setup
 from flatland import Form, String
 

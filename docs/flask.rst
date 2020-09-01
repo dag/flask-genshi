@@ -1,7 +1,7 @@
 Integration with Flask
 ======================
 
-.. currentmodule:: flaskext.genshi
+.. currentmodule:: flask_genshi
 
 
 Using Jinja filters and tests

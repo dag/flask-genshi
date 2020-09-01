@@ -1,6 +1,6 @@
 import inspect
 
-from flaskext.genshi import render_template
+from flask_genshi import render_template
 
 
 def test_provides_jinja_tests_and_filters(app):
