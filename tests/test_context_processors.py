@@ -14,6 +14,7 @@ def test_updates_context(app):
 
         rendered = render_response("context.html")
 
+        # Remove leading indentation and encode since `render_response` returns bytes
         expected_data = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">

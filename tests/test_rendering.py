@@ -9,6 +9,7 @@ def test_renders_html(app, context):
     """A html extension results in an HTML doctype and mimetype"""
     with app.test_request_context():
         rendered = render_response("test.html", context)
+        # Remove leading indentation and encode since `render_response` returns bytes
         expected_data = cleandoc(
             """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <body>Hi Rudolf</body>
@@ -64,6 +65,7 @@ def test_renders_svg(app, context):
     """An svg extension results in an SVG doctype and mimetype"""
     with app.test_request_context():
         rendered = render_response("test.svg", context)
+        # Remove leading indentation and encode since `render_response` returns bytes
         expected_data = cleandoc(
             """
             <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">

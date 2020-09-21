@@ -23,6 +23,7 @@ def test_applies_method_filters(app):
             return template | Transformer("head/title").prepend("Flask-Genshi - ")
 
         rendered = render_template("filter.html")
+        # Remove leading indentation, for cleaner multi-line string
         expected = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -41,6 +42,7 @@ def test_filters_per_render(app):
             return template | Transformer("head/title").append(" - Flask-Genshi")
 
         rendered = render_template("filter.html", filter=prepend_title)
+        # Remove leading indentation, for cleaner multi-line string
         expected = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -63,6 +65,7 @@ def test_works_with_flatland(app):
 
         context = dict(form=FlatlandForm({"username": "dag"}))
         rendered = render_template("flatland.html", context)
+        # Remove leading indentation, for cleaner multi-line string
         expected = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">

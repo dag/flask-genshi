@@ -7,7 +7,7 @@ from flask_genshi import template_generated, render_template
 def captured_templates(app):
     recorded = []
 
-    def record(app, template, context):
+    def record(_app, template, context):
         recorded.append((template, context))
 
     template_generated.connect(record, app)

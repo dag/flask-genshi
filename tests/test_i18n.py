@@ -17,6 +17,7 @@ def test_does_translations(app):
             Translator(lambda s: s.upper()).setup(template)
 
         rendered = render_template("i18n.html")
+        # Remove leading indentation, for cleaner multi-line string
         expected = cleandoc(
             """
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
