@@ -1,7 +1,7 @@
 Use with Other Extensions and Packages
 ======================================
 
-.. currentmodule:: flaskext.genshi
+.. currentmodule:: flask_genshi
 
 
 Form Processing with flatland

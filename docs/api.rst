@@ -1,7 +1,7 @@
 API
 ===
 
-.. module:: flaskext.genshi
+.. module:: flask_genshi
 
 
 Rendering functions

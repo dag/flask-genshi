@@ -1,7 +1,7 @@
 Quickstart
 ==========
 
-.. currentmodule:: flaskext.genshi
+.. currentmodule:: flask_genshi
 
 
 Installation
@@ -23,7 +23,7 @@ You need to construct a :class:`Genshi` with your
 
 ::
 
-    from flaskext.genshi import Genshi
+    from flask_genshi import Genshi
 
     app = Flask(__name__)
     genshi = Genshi(app)
@@ -34,7 +34,7 @@ and sets the right doctype for you.
 
 Use it like so::
 
-    from flaskext.genshi import render_response
+    from flask_genshi import render_response
 
     @app.route('/')
     def index():

@@ -1,7 +1,7 @@
 Flask-Genshi
 ============
 
-.. currentmodule:: flaskext.genshi
+.. currentmodule:: flask_genshi
 
 Flask-Genshi is an extension to `Flask`_ that allows you to easily
 use `Genshi`_ for templating.

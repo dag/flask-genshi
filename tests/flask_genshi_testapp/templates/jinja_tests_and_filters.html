@@ -1,6 +1,9 @@
 <p class="${'even' if tests.even(1) else 'odd'}">
-    ${filters.truncate('Hello World', 10)}
+    ${filters.upper('Hello World')}
   <span class="${'odd' if isodd(0) else 'even'}">
-      ${truncate('Hello World', 10)}
+      ${lower('Hello World')}
   </span>
+    ${filters.truncate('Hello World', 10, leeway=0)} <!--! example of environmentfilter -->
+    ${' '.join(filters.map(['Foo', 'Bar'], 'lower'))} <!--! example of contextfilter -->
+    ${filters.join(['Foo', 'Bar'])} <!--! example of evalcontextfilter -->
 </p>
