@@ -183,9 +183,21 @@ class Genshi(object):
         """A :class:`genshi.template.TemplateLoader` that loads templates
         from the same places as Flask.
 
+        .. versionchanged:: 0.6
+            Removed support for flask modules and enabled support for blueprints
         """
-        path = loader.directory(os.path.join(self.app.root_path, self.app.template_folder))
-        return TemplateLoader(path,
+        path = loader.directory(
+            os.path.join(self.app.root_path, self.app.template_folder or 'templates')
+        )
+        blueprint_paths = {}
+        blueprints = getattr(self.app, 'blueprints', {})
+        for name, blueprint in blueprints.items():
+            blueprint_path = os.path.join(
+                blueprint.root_path, blueprint.template_folder or 'templates'
+            )
+            if os.path.isdir(blueprint_path):
+                blueprint_paths[name] = loader.directory(blueprint_path)
+        return TemplateLoader([path, loader.prefixed(**blueprint_paths)],
                               auto_reload=self.app.debug,
                               callback=self.callback)
 
@@ -262,10 +274,6 @@ def generate_template(template=None, context=None,
         context.setdefault(key, value)
     context.setdefault('filters', filters)
     context.setdefault('tests', current_app.jinja_env.tests)
-    for key, value in filters.items():
-        context.setdefault(key, value)
-    for key, value in current_app.jinja_env.tests.items():
-        context.setdefault('is%s' % key, value)
     current_app.update_template_context(context)
 
     if template is not None:

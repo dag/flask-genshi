@@ -16,9 +16,6 @@ def test_provides_jinja_tests_and_filters(app):
             <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
             <p class="odd">
                 HELLO WORLD
-              <span class="even">
-                  hello world
-              </span>
                 Hello...
                 foo bar
                 FooBar
